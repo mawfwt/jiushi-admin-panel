@@ -1,0 +1,33 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="Apache-2.0"
+
+[[mods]]
+modId="jiushi_territory"
+version="0.1.1-alpha"
+displayName="[九氏]领地扩展"
+authors="MA"
+description='''[九氏]领地扩展 (Jiushi Territory Addon)
+需要前置: 九氏面板 v1.0.5-alpha+
+功能: 领地创建/删除 · 选区工具(蹲下+左键选点) · 个人领地(≤128, 上限2) · 官方领地(OP专属, 无限制) · 闯入者保护 · 冒险模式限制 · 权限白名单'''
+
+[[dependencies.jiushi_territory]]
+    modId="forge"
+    mandatory=true
+    versionRange="[47,)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.jiushi_territory]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.20.1,1.21)"
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.jiushi_territory]]
+    modId="jiushi_admin"
+    mandatory=true
+    versionRange="[1.0.5-alpha,)"
+    ordering="AFTER"
+    side="BOTH"
