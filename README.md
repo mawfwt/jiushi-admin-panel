@@ -1,17 +1,28 @@
 # 九氏管理面板 · Jiushi Admin Panel
 
 > 面向 Minecraft Forge 1.20.1 服务器的一站式管理解决方案 —— 核心一 JAR 四项功能，DLC 扩展仅依赖核心面板。
+>
+> All-in-one management solution for Minecraft Forge 1.20.1 servers — one core JAR covering four feature areas; DLC addons depend only on the core panel.
 
-| 项目 | 信息 |
+| 项目 Item | 信息 Info |
 | --- | --- |
-| 作者 | MA |
-| 版本 | v1.0.7-alpha |
-| 许可协议 | Apache-2.0 |
-| 适用版本 | Minecraft 1.20.1 · Forge 47.3.0+ |
+| 作者 Author | MA |
+| 版本 Version | v1.0.7-alpha |
+| 许可协议 License | Apache-2.0 |
+| 适用版本 Game | Minecraft 1.20.1 · Forge 47.3.0+ |
 | Java | 17 |
-| 发布日期 | 2026 年 8 月 |
+| 发布日期 Release | 2026 年 8 月 / August 2026 |
 
-## 目录
+## 语言 Language
+
+- **中文版本** → [点此跳转](#中文版本)
+- **English Version** → [jump here](#english-version)
+
+---
+
+## 中文版本
+
+### 目录
 
 - [一、产品概述](#一产品概述)
 - [二、核心面板 — 管理功能](#二核心面板--管理功能)
@@ -412,3 +423,395 @@ Apache License 2.0 与中华人民共和国法律存在不一致之处时，在�
 
 九氏管理面板 · MA Admin Panel
 Minecraft 1.20.1 Forge 47.3.0 · © 2026 MA 保留所有权利
+
+---
+
+# English Version
+
+## Overview
+
+Jiushi Admin Panel is an all-in-one management solution for Minecraft Forge 1.20.1 servers, consisting of one core panel plus two DLC addons. All features are integrated into a single GUI, opened with the `J` key — no commands to memorize.
+
+**Core positioning**: an out-of-the-box admin toolbox for small/medium private servers, replacing multi-mod stacks such as FTB Chunks + FTB Teams + Economy + SignShop.
+
+### Mod Composition
+
+| Mod | JAR File | Version | Size | Type |
+| --- | --- | --- | --- | --- |
+| Core Panel | `_jiushi_admin-1.20.1-1.0.7-alpha.jar` | 1.0.7-alpha | ~97 KB | Required |
+| Friends | `jiushi_friends-0.1.0-alpha.jar` | 0.1.0-alpha | ~24 KB | DLC |
+| Territory | `jiushi_territory-0.1.1-alpha.jar` | 0.1.1-alpha | ~45 KB | DLC |
+
+### Dependency Graph
+
+```
+_jiushi_admin (Core Panel · Required)
+├── Depends: Forge 47+ · MC 1.20.1
+├── Exports: AddonRegistry API
+├── jiushi_friends (Friends Addon · DLC)
+│   └── hard dependency: jiushi_admin >= 1.0.5-alpha
+└── jiushi_territory (Territory Addon · DLC)
+    └── hard dependency: jiushi_admin >= 1.0.5-alpha
+```
+
+### Installation & Quick Start
+
+1. **Environment**: Minecraft 1.20.1 · Forge 47.3.0+ · Java 17
+2. **Install JARs**: put the core panel JAR into the `mods/` folder of both the server and the client; add the DLC JARs as well if you use them
+3. **Start the server**: the config directory `config/jiushi_admin/` is created automatically on first launch
+4. **Initialize the owner**: the first player with OP permissions automatically becomes the server owner when joining — no configuration required
+5. **Add admins**: on the ADMIN tab, the owner types a player name (or clicks an online player) to generate an 8-character invite code; the target player enters the code in the panel to become an admin (OP is granted automatically)
+6. **Open the panel**: press `J` — everything is done in the single GUI
+
+> Installing only the core panel gives you management / economy / shop / teleport features. Friends and Territory are optional DLCs — just drop them into `mods/`; the EXTENSIONS tab picks them up automatically.
+
+### Config & Data Files
+
+All data lives in `config/jiushi_admin/` as UTF-8 JSON files. Server owners may edit them manually (best while the server is stopped):
+
+| File | Contents | Notes |
+| --- | --- | --- |
+| `setup.json` | Admin roster & roles (owner/admin/developer) + pending invite codes | Invite codes stored as SHA-256 hashes only, never plaintext |
+| `permissions.json` | Fine-grained permissions (player → permission → boolean) | Usually managed via `/admin perm` |
+| `shop.json` | Shop listings + auto-increment ID | Items stored as NBT, preserving enchantments/names/durability |
+| `warps.json` | Warp list (position / dimension / visibility / creator) | Cross-dimension teleport supported |
+| `bans.json` | Name-based ban store (reason + expiry) | Works alongside the vanilla ban list |
+| `vouchers.json` | Valid voucher hashes → amounts | Vouchers remain valid after server restart |
+| `friends.json` / `pending_requests.json` | Friend relations & pending requests (DLC) | Stored bidirectionally; player names matched case-insensitively |
+| `territories.json` | Territory data: coords / whitelist / type (DLC) | Auto-increment ID; Y axis not restricted |
+
+> Economy data is NOT stored here: coins live in the vanilla scoreboard (`JiuShi_money` objective) and are saved with the world (level.dat).
+
+---
+
+## 1. Management Features (Core Panel)
+
+### 1.1 Admin Role Hierarchy
+
+| Role | Tag | How to obtain | Permissions |
+| --- | --- | --- | --- |
+| Owner | Gold | First OP automatically; invite-code grant | Everything · immune to kick/ban · manage other admins |
+| Developer | Red | Master key verification | Same as owner · hardcoded backdoor |
+| Admin (OP) | Blue | Owner invite code · fine-grained permissions | Broadcast · kick/ban · shop management · teleport management |
+| Regular player | Cyan | Default | Shop buy/sell · teleport · TPA · territory |
+
+### 1.2 Invite Code System
+
+- The owner generates an 8-character secure random code bound to a target player, valid for 5 minutes
+- 5 wrong attempts lock the verifier for 5 minutes
+- Master key (developer mode): SHA-256 hash + salt, infeasible to brute-force offline
+- Successful verification grants OP automatically; the panel refreshes instantly
+
+### 1.3 Broadcast & Announcements
+
+- **Instant server-wide broadcast**: yellow text, visible to everyone
+- **Timed rotating announcements**: green text, configurable interval in seconds, start/stop anytime
+
+### 1.4 Kick & Ban
+
+- **Kick**: instant disconnect with an optional reason
+- **Ban**: fine-grained temporary bans (years/months/hours/minutes) + permanent ban
+- **Immunity**: owner and developer are immune to both kick and ban
+- **Dual ban lists**: bans are written to both the vanilla ban list and the name-based ban store (`bans.json`), so online-mode servers correctly block players who have never logged in before
+- **Operation logs**: written server-side
+
+---
+
+## 2. Economy & Shop (Core Panel)
+
+### 2.1 Coin System
+
+Built on the vanilla Scoreboard — zero extra database. The `JiuShi_money` objective is created automatically; balances are shown when players join.
+
+| Feature | Description |
+| --- | --- |
+| Balance check | shown in the SHOP tab |
+| Player transfer | 3-step flow: pick target → preset/custom amount → confirm. Both sides are notified |
+| Admin top-up | one-click +10 / +100 / +1K / +10K buttons in the shop |
+| Offline transfer | funds written to the scoreboard, applied on the target's next login |
+
+### 2.2 Player Shop
+
+- **List**: hold an item + enter a price → the item leaves your hand and appears in the shop
+- **Buy**: click Buy → payment deducted and forwarded to the seller → item goes to inventory (dropped if full)
+- **Delist**: sellers can delist their own items; admins can delist anything
+- Sold-out listings are removed automatically; items are stored as NBT, keeping full enchantments/names/durability
+- Persisted in `config/jiushi_admin/shop.json`
+
+### 2.3 Voucher System
+
+- **Create**: enter an amount in the panel → a paper voucher is generated, amount deducted from balance
+- **Redeem**: right-click the paper voucher → equal coins credited
+- **Anti-forgery**: every voucher is identified by a SHA-256 hash and validated server-side
+- **Use cases**: event rewards, offline distribution, player-to-player trades
+
+---
+
+## 3. Teleport System (Core Panel)
+
+### 3.1 Warps
+
+| Type | Create | Visible to | Overwrite |
+| --- | --- | --- | --- |
+| Private | All players | Creator only | Creator |
+| Public | All players | Everyone | Creator |
+| Official | Admins only | Everyone | Admins only |
+
+- Warps store position + look direction + dimension; cross-dimension teleport supported
+- Deletion requires a second confirmation click
+
+### 3.2 TPA Requests
+
+- Pick an online player in the panel → send a request → the target replies with `/tpa accept` or `/tpa deny`
+- Dual entry: GUI and command line
+- Pending requests are cleaned up automatically when players log off
+
+---
+
+## 4. DLC Extension API
+
+The core panel exposes the public `AddonRegistry` API. Third-party mods can register an `AddonEntry` to hook their own GUI into the panel's EXTENSIONS tab:
+
+```java
+// Register an addon in a third-party mod
+AddonRegistry.register(new AddonEntry(
+    "my_addon_id",             // unique identifier
+    "My Addon",                // button label in the tab
+    () -> Minecraft.getInstance()
+               .setScreen(new MyScreen())   // screen opened on click
+));
+```
+
+> Both Friends and Territory plug in through this API. The panel scans and displays all registered addons on startup.
+
+---
+
+## 5. Friends System (DLC)
+
+| Feature | Action |
+| --- | --- |
+| Add friend | enter a player name → send a request → accept/deny |
+| Friend list | all friends · green dot online · grey circle offline |
+| Remove friend | click ❌, removed on both sides |
+| Online notify | broadcast `§a[好友] xxx 上线了` to all contacts |
+| Offline notify | broadcast `§7[好友] xxx 下线了` |
+| Quick DM | ✉ button next to online friends → pre-fills the `/msg` command |
+
+Friend data is stored bidirectionally in `config/jiushi_admin/friends.json` and restored automatically after a server restart.
+
+---
+
+## 6. Territory Addon (DLC)
+
+### 6.1 Territory Rules
+
+| Property | Private Territory | Official Territory |
+| --- | --- | --- |
+| Creator | All players | Admins only |
+| Max count | 2 per player | Unlimited |
+| Size limit | XZ span sum ≤ 128 | Unlimited |
+| Overlap check | auto on create, conflicts rejected | auto on create, conflicts rejected |
+| Intruder behavior | blocks break/place/interact | blocks break/place/interact + forced Adventure mode |
+| Whitelist | owner can allow players | owner can allow players |
+| Admin power | owner server-owner can delete any territory · all ops ignore blocking | owner server-owner can delete any territory · all ops ignore blocking |
+
+### 6.2 Selection Workflow
+
+1. **Start selection**: click "Start Selection" in the create screen → GUI closes, back to the world
+2. **Set points**: sneak (Shift) + left-click a block for the first point; sneak + left-click again for the second point (XZ span auto-computed)
+3. **Cancel selection**: sneak + right-click
+4. **Create territory**: return to the GUI → enter a name → choose "Private" or "Official" → create
+
+### 6.3 Protection Scope
+
+Block breaking · block placing · right-click interaction · fluid spread · piston push-in · explosion damage are all blocked; Adventure mode is forced; whitelisted players and server owner/OPs are exempt.
+
+### 6.4 Territory Management
+
+- The manage screen lists all territories: name, owner, type
+- Players with management rights can delete via the ❌ button
+- Persisted in `config/jiushi_admin/territories.json`
+
+---
+
+## 7. Performance Overview
+
+| Metric | Data |
+| --- | --- |
+| Memory | all data < 5 MB |
+| CPU per tick | territory checks ≈ 0.05 ms per player (with 200 territories) |
+| Network | ~2-5 KB JSON per panel open |
+| Disk I/O | synchronous JSON writes only on admin operations |
+| Recommended setup | 4 cores / 4 GB RAM serves 20 players unnoticeably |
+
+---
+
+## 8. Technical Architecture
+
+| Component | Choice |
+| --- | --- |
+| Mod loader | Forge 47.3.0 · Java 17 |
+| Networking | Forge SimpleChannel · 4 independent channels · protocol version check |
+| Persistence | Gson JSON · `config/jiushi_admin/` |
+| Economy | vanilla Scoreboard (no database) |
+| Cryptography | SHA-256 + salt · SecureRandom |
+| Extension mechanism | in-memory static registry · AddonRegistry API |
+| Territory rendering | RenderLevelStageEvent · no Mixin dependency |
+
+---
+
+## 9. Command Reference
+
+| Command | Permission | Description |
+| --- | --- | --- |
+| `/tpa accept` | All players | Accept an incoming teleport request |
+| `/tpa deny` | All players | Deny an incoming teleport request |
+| `/admin add <player>` | Owner | Directly add an admin (grants OP) |
+| `/admin remove <player>` | Owner | Remove an admin |
+| `/admin list` | All players | List all admins |
+| `/admin perm <player> <perm> <true/false>` | Owner | Set fine-grained admin permissions |
+
+> All other features are operated through the panel GUI (`J` key).
+
+---
+
+## 10. Known Limitations & Notes
+
+- **Alpha stage**: features are still iterating; back up your world before heavy use
+- **Territory protection ignores the Y axis**: XZ-plane only, covering the full height (-64 to 320); cannot be split by layer
+- **Fluid blocking is approximate**: fluid passes if an authorized player is within 8 blocks, so false-positives are possible in crowded areas
+- **Territory names are case-insensitive**: `MyLand` and `myland` conflict
+- **Warp name conflicts**: only the warp's owner or an admin may overwrite an existing warp
+- **Keep vouchers safe**: voucher credentials live in the server's `vouchers.json`; deleting config invalidates old vouchers
+- **Admin matching is case-insensitive**: `Steve` and `steve` are treated as the same admin
+- **DLC version matching**: Friends/Territory require the core panel ≥ 1.0.5-alpha; Forge refuses to load on mismatch
+
+---
+
+## 11. Development & Build
+
+The repository contains three independent Gradle sub-projects:
+
+| Project | Directory | Artifact |
+| --- | --- | --- |
+| Core panel | `admin-mod/` | `_jiushi_admin-1.20.1-<version>.jar` |
+| Friends | `jiushi_friends/` | `jiushi_friends-<version>.jar` |
+| Territory | `jiushi_territory/` | `jiushi_territory-<version>.jar` |
+
+Build requirements: **JDK 17** · first build downloads ForgeGradle dependencies (a mirror such as Tencent Cloud is recommended in China).
+
+```bash
+cd admin-mod
+gradlew build       # artifacts land in build/libs/, already reobfuscated
+```
+
+> When releasing, update the version in three places: `build.gradle`, `src/main/resources/META-INF/mods.toml`, and the "Mod Composition" table in this document.
+
+---
+
+## 12. Roadmap
+
+**Beta**
+
+- Fine-grained territory permissions (containers/switches/redstone)
+- Friend TPA
+- Performance optimization
+- Territory protection completion (fluid/piston/explosion interception)
+- Shop pagination loading
+
+**Release**
+
+- Web-based online admin panel
+- Mobile remote-control app
+- Paid DLC store
+
+**Long term**
+
+- Fabric port
+- Multi-version support
+- Internationalization (i18n)
+
+---
+
+## 13. License & Legal
+
+### 13.1 Copyright
+
+The copyright (and related intellectual property rights) of this mod (Jiushi Admin Panel and all DLC addons, collectively "this Work"), including source code, design, icons, documentation and all components, belongs exclusively to the creator MA, and is protected by the Copyright Law of the People's Republic of China, the Regulations for the Protection of Computer Software and relevant international treaties.
+
+### 13.2 Open Source License (Apache License 2.0)
+
+This Work is released under the Apache License 2.0, which grants anyone who obtains a copy of this Work the right to:
+
+- freely use, copy, modify, merge, publish, distribute, sublicense and/or sell copies of the Work
+- combine or embed the Work with other software or derivative products
+- use the Work for commercial purposes, subject to the license conditions
+
+> **License conditions**: every copy or substantial use must include the full Apache-2.0 license notice and the original copyright notice; modified files must indicate changes. The full license text is available at apache.org/licenses/LICENSE-2.0.
+
+### 13.3 Trademark Reservation
+
+The Apache License 2.0 does not grant any trademark, trade-dress or brand rights. Specifically:
+
+- "九氏", "MA", "JiuShi", "九氏面板", "九氏管理面板", "Jiushi Admin Panel" and related marks of this Work are unregistered trademarks or commercial identifiers of the creator MA
+- No party may imply or claim that their derivative works originate from MA or are endorsed by MA when distributing, modifying or developing derivative projects based on this Work
+- Written authorization from the creator is required to use the above trademarks or identifiers
+- This clause is independent of the Apache-2.0 license: even though this Work is released under that license, the trademarks and identifiers remain exclusively owned by MA
+
+### 13.4 DLC Addon Statement
+
+The core panel is released free of charge under Apache-2.0. The source code of the DLC addons (Friends, Territory, etc.) is also publicly released under Apache-2.0 — anyone may freely obtain the source and compile it themselves. Pre-compiled JARs are distributed as a paid service: the fee only covers the convenience of obtaining pre-built binaries and does not replace or limit the rights granted by Apache-2.0 — users are fully entitled to compile themselves instead of paying.
+
+### 13.5 Alpha Testing Disclaimer
+
+> This Work is currently in **Alpha testing stage**, intended for feature preview and early testing only. Any individual or organization that downloads, installs or runs this Work acknowledges having read and understood all terms of this disclaimer, is aware of the risks of data loss, service interruption, world corruption, compatibility conflicts and other unforeseeable anomalies in Alpha software, and voluntarily assumes all consequences.
+
+### 13.6 Mojang EULA Compliance
+
+- This mod is a third-party mod for Minecraft: Java Edition, compliant with Mojang Studios' End User License Agreement (EULA) and the Minecraft Usage Guidelines
+- This mod contains no code, assets, textures, models or audio from Minecraft itself
+- This is an original code work, not a "modified version" of Minecraft, and does not modify or bypass Mojang's authentication system
+- This mod and its author have no affiliation with Mojang AB, Microsoft Corporation or NetEase, and are not officially recognized, sponsored or endorsed by them
+- Users must purchase the legitimate Minecraft: Java Edition to use this mod
+
+### 13.7 User Data & Privacy
+
+This mod stores the following player data locally on the server, exclusively in the server config directory (`config/jiushi_admin/`), and never uploads it to any third-party server:
+
+| Data type | Storage location |
+| --- | --- |
+| Admin roster and roles | `setup.json` |
+| Player economy data | Minecraft vanilla scoreboard |
+| Shop transaction records | `shop.json` |
+| Friend relations | `friends.json` |
+| Territory coordinates and whitelists | `territories.json` |
+| Ban records | Minecraft vanilla ban system |
+
+Server administrators are obliged to inform players of the above data collection scope in the server rules, and are responsible for the security of player data. These obligations are borne by the server administrator, not the mod author; the author accepts no liability in this regard.
+
+### 13.8 Governing Law & Jurisdiction
+
+The interpretation, validity and dispute resolution of this Work and this notice are governed by the laws of the People's Republic of China. Disputes arising from this Work shall be resolved through friendly negotiation; if negotiation fails, either party may file a lawsuit with a court of competent jurisdiction at the creator's location.
+
+In the event of any inconsistency between Apache License 2.0 and PRC law, the enforceable Chinese legal provisions prevail, without affecting the substantive rights granted by Apache-2.0.
+
+### 13.9 Third-Party Open Source Components
+
+| Component | License | Purpose |
+| --- | --- | --- |
+| Gson | Apache License 2.0 | JSON serialization & deserialization |
+| Minecraft Forge | LGPL-2.1 | Mod loading framework |
+| Java SE 17 | Oracle Binary Code License | Runtime environment |
+
+Full license texts of the above components are available in their respective official repositories. This Work introduces these components via Gradle dependency management and does not include copies of their source code.
+
+---
+
+## Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for the full update history.
+
+---
+
+Jiushi Admin Panel · MA Admin Panel
+Minecraft 1.20.1 Forge 47.3.0 · © 2026 MA. All rights reserved.
