@@ -390,7 +390,9 @@ Apache License 2.0 不授予任何商标权、商业标识权或品牌使用权�
 
 ### 7. 用户数据与隐私
 
-本模组在服务端本地存储以下玩家数据，所有数据仅保存在服务器配置目录（`config/jiushi_admin/`）中，不会上传至任何第三方服务器：
+#### 7.1 本地面板数据
+
+本模组（九氏管理面板及全部 DLC 扩展）在服务端本地存储以下玩家数据，所有数据仅保存在服务器配置目录（`config/jiushi_admin/`）中，不会主动上传至任何第三方服务器：
 
 | 数据类型 | 存储位置 |
 | --- | --- |
@@ -401,7 +403,15 @@ Apache License 2.0 不授予任何商标权、商业标识权或品牌使用权�
 | 领地坐标与白名单 | `territories.json` |
 | 封禁记录 | Minecraft 原生封禁系统 |
 
-服务器管理员（服主）有义务在服务器规则中告知玩家上述数据收集范围，并对玩家数据的存储安全负责，不得将玩家数据用于服务器运营之外的任何目的。以上义务的履行主体为服务器管理员而非本模组作者，作者对此不承担任何责任。
+#### 7.2 可选远程管理服务（Beta 阶段规划）
+
+未来 Beta 阶段将推出可选订阅服务"九氏远程管理"，允许服主通过手机或网页远程访问服务器（发送指令、查看状态、备份存档等）。此项服务需要服主主动订阅并部署配套 companion mod，届时部分数据（如备份存档）将由服主主动上传至由作者租赁的云服务器。
+
+**本服务非必选项**：服主完全可以在不订阅的情况下正常使用本地面板的全部功能。订阅仅代表服主自愿委托作者提供云基础设施托管，数据上传行为出于服主自身意愿，相应数据安全责任由云服务提供商与服主共同承担。
+
+该服务目前处于规划阶段，尚未实装。上线前将另行发布完整的《远程服务隐私政策》及数据存储细则。
+
+服务器管理员（服主）有义务在服务器规则中告知玩家上述数据收集范围，并对本地存储的玩家数据安全负责，不得将玩家数据用于服务器运营之外的任何目的。以上义务的履行主体为服务器管理员而非本模组作者，作者对此不承担任何责任。
 
 ### 8. 法律适用与管辖
 
@@ -776,7 +786,9 @@ The core panel and all DLC addons (Friends, Territory, etc.) are released free o
 
 ### 13.7 User Data & Privacy
 
-This mod stores the following player data locally on the server, exclusively in the server config directory (`config/jiushi_admin/`), and never uploads it to any third-party server:
+#### 13.7.1 Local Panel Data
+
+This mod (Jiushi Admin Panel and all DLC addons) stores the following player data locally on the server, exclusively in the server config directory (`config/jiushi_admin/`), and never proactively uploads it to any third-party server:
 
 | Data type | Storage location |
 | --- | --- |
@@ -787,7 +799,15 @@ This mod stores the following player data locally on the server, exclusively in 
 | Territory coordinates and whitelists | `territories.json` |
 | Ban records | Minecraft vanilla ban system |
 
-Server administrators are obliged to inform players of the above data collection scope in the server rules, and are responsible for the security of player data. These obligations are borne by the server administrator, not the mod author; the author accepts no liability in this regard.
+#### 13.7.2 Optional Remote Management Service (Beta Roadmap)
+
+A future Beta release will offer an optional subscription service, "Jiushi Remote Management", allowing server owners to access their servers remotely via mobile or web (issuing commands, viewing status, backing up saves, etc.). This service requires the server owner to actively subscribe and deploy a companion mod, at which point certain data (e.g., backup saves) will be actively uploaded by the server owner to cloud servers leased by the author.
+
+**This service is entirely optional**: server owners may use all local panel features in full without subscribing. A subscription merely represents the server owner's voluntary decision to commission the author for cloud infrastructure hosting; data uploads result from the server owner's own choice, and corresponding data security responsibilities are shared between the cloud service provider and the server owner.
+
+This service is currently in the planning stage and has not yet been implemented. A complete Remote Service Privacy Policy and data storage details will be published separately before launch.
+
+Server administrators are obliged to inform players of the above data collection scope in the server rules, and are responsible for the security of locally stored player data. These obligations are borne by the server administrator, not the mod author; the author accepts no liability in this regard.
 
 ### 13.8 Governing Law & Jurisdiction
 
