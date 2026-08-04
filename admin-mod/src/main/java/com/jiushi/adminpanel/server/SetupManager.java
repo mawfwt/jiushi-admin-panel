@@ -71,8 +71,12 @@ public class SetupManager {
 
     /** 判断玩家是否为服主/开发者 (拥有最高权限) */
     public static boolean isOwner(String playerName) {
-        String role = getIgnoreCase(admins, playerName);
-        return "owner".equals(role) || "developer".equals(role);
+        return "owner".equals(getRole(playerName)) || "developer".equals(getRole(playerName));
+    }
+
+    /** 大小写不敏感获取玩家角色 (owner/admin/developer), 未注册返回 null */
+    public static String getRole(String playerName) {
+        return getIgnoreCase(admins, playerName);
     }
 
     /** 是否已有管理员完成注册 (面板是否已初始化) */

@@ -253,7 +253,7 @@ public class ShopPacket {
                     if (targetListing != null) {
                         boolean isAdmin = SetupManager.isAdmin(player.getName().getString());
                         boolean isOwner = targetListing.sellerName != null
-                                && targetListing.sellerName.equals(player.getName().getString());
+                                && targetListing.sellerName.equalsIgnoreCase(player.getName().getString());
                         if (!isAdmin && !isOwner) {
                             pendingStatusMessages.put(player.getUUID(), "§c你没有权限下架此商品");
                             player.sendSystemMessage(Component.literal("§c你没有权限下架此商品"));
@@ -312,7 +312,7 @@ public class ShopPacket {
             response.verified = SetupManager.isAdmin(player.getName().getString());
             response.statusMsg = statusMsg != null ? statusMsg : "";
             response.money = MoneyManager.getMoney(player);
-            response.role = SetupManager.getAdmins().getOrDefault(player.getName().getString(), "");
+            response.role = SetupManager.getRole(player.getName().getString());
             // 构建管理员列表 (用于 OP_MANAGE 标签页显示)
             response.adminList = new ArrayList<>();
             for (var e : SetupManager.getAdmins().entrySet()) {
