@@ -130,9 +130,9 @@ public class FriendScreen extends Screen {
             // 私聊按钮 (仅在线时显示)
             if (f.online) {
                 addRenderableWidget(Button.builder(Component.literal("§e✉"), btn -> {
-                    // 打开聊天输入框并预填 /msg <好友名>
-                    Minecraft.getInstance().setScreen(new ChatScreen("/msg " + f.name + " "));
+                    // 先关闭好友面板, 再打开聊天输入框并预填 /msg <好友名>
                     onClose();
+                    Minecraft.getInstance().setScreen(new ChatScreen("/msg " + f.name + " "));
                 }).bounds(left + 240, rowY, 20, 18).build());
             }
             rowY += 20;
@@ -226,6 +226,9 @@ public class FriendScreen extends Screen {
                         } else if (result == 3) {
                             player.sendSystemMessage(Component.literal(
                                     "§c你已经发送过请求了，请等待对方处理"));
+                        } else if (result == 4) {
+                            player.sendSystemMessage(Component.literal(
+                                    "§e对方已向你发送过好友请求，请在待处理请求中同意"));
                         } else {
                             player.sendSystemMessage(Component.literal(
                                     "§a已向 " + data + " 发送好友请求"));

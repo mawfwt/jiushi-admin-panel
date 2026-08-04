@@ -453,8 +453,11 @@ public class MainScreen extends Screen {
                 AdminMod.CHANNEL.sendToServer(new ShopPacket(ShopPacket.Action.BUY, l.id, 0, null));
                 setStatus("购买请求已发送");
             }).bounds(left + 280, y, 35, 18).build());
-            // 下架按钮 (仅管理员)
-            if (isAdmin()) {
+            // 下架按钮 (卖家本人或管理员)
+            boolean canDelist = isAdmin()
+                    || (l.sellerName != null && minecraft != null && minecraft.player != null
+                    && l.sellerName.equalsIgnoreCase(minecraft.player.getName().getString()));
+            if (canDelist) {
                 addRenderableWidget(Button.builder(Component.literal("下架"), btn -> {
                     AdminMod.CHANNEL.sendToServer(new ShopPacket(
                             ShopPacket.Action.REMOVE, l.id, 0, null));
@@ -538,11 +541,15 @@ public class MainScreen extends Screen {
                 String n = name.getValue();
                 if (warps.containsKey(n)) {
                     WarpManager.WarpPoint existing = warps.get(n);
-                    if (admin && warpVisibility == 2 && existing.visibility == 1) {
-                        // 管理员覆盖公开→官方: 允许
+                    // 覆盖权限: 管理员 或 传送点owner本人 (与服务端 WarpPacket SET 校验一致)
+                    boolean canOverwrite = admin
+                            || (minecraft != null && minecraft.player != null
+                            && existing.owner != null
+                            && existing.owner.equalsIgnoreCase(minecraft.player.getName().getString()));
+                    if (canOverwrite) {
                         AdminMod.CHANNEL.sendToServer(new WarpPacket(
                                 WarpPacket.Action.SET, n, warpVisibility));
-                        name.setValue(""); setStatus("已覆盖公开传送点");
+                        name.setValue(""); setStatus("传送点已覆盖");
                     } else {
                         setStatus("§c该名称已存在，请换一个");
                     }
@@ -769,6 +776,7 @@ public class MainScreen extends Screen {
     public void tick() {
         // 商店/面板数据就绪 → 刷新
         if (ClientData.shopDataReady) {
+            boolean wasVerified = shopVerified; // 记录旧验证状态 (用于检测权限变化)
             shopListings = ClientData.pendingShopListings != null
                     ? ClientData.pendingShopListings : List.of();
             shopVerified = ClientData.pendingShopVerified != null
@@ -788,9 +796,6 @@ public class MainScreen extends Screen {
                     setStatus(msg);
                 }
             }
-            boolean wasVerified = shopVerified;
-            shopVerified = ClientData.pendingShopVerified != null
-                    && ClientData.pendingShopVerified;
             boolean becameAdmin = !wasVerified && shopVerified;
             // 涉及权限变化 / 商店/OP页 → 重建
             if (currentTab == Tab.SHOP || currentTab == Tab.OP_MANAGE
