@@ -374,7 +374,7 @@ Apache License 2.0 不授予任何商标权、商业标识权或品牌使用权�
 
 ### 4. DLC 扩展声明
 
-核心面板以 Apache-2.0 协议免费发布。DLC 扩展（好友系统、领地扩展等）的源代码同样以 Apache-2.0 协议公开发布，任何用户均可自由获取源码并自行编译使用。预编译 JAR 文件采用收费分发模式，用户支付的费用仅用于获取预编译二进制包的便利分发权，不构成对 Apache-2.0 所授权利的替代或限制——用户完全有权选择自行编译来代替付费。
+核心面板及全部 DLC 扩展（好友系统、领地扩展等）均以 Apache-2.0 协议免费发布，源代码与预编译 JAR 文件均免费分发，均可自由获取使用，无需支付任何费用。
 
 ### 5. Alpha 测试阶段声明
 
@@ -403,13 +403,13 @@ Apache License 2.0 不授予任何商标权、商业标识权或品牌使用权�
 
 服务器管理员（服主）有义务在服务器规则中告知玩家上述数据收集范围，并对玩家数据的存储安全负责，不得将玩家数据用于服务器运营之外的任何目的。以上义务的履行主体为服务器管理员而非本模组作者，作者对此不承担任何责任。
 
-### 9. 法律适用与管辖
+### 8. 法律适用与管辖
 
 本作品及本声明的解释、效力及争议解决，适用中华人民共和国法律。因本作品产生的争议，双方应友好协商解决；协商不成的，任何一方可向创作者所在地有管辖权的人民法院提起诉讼。
 
-Apache License 2.0 与中华人民共和国法律存在不一致之处时，在不影响 Apache-2.0 许可实质权利的前提下，以可强制执行的中国法律条款为准。
+本作品以 Apache License 2.0 为主要开源许可协议。如 Apache-2.0 条款与中华人民共和国法律存在无法调和的冲突，以 Apache-2.0 条款为准，中华人民共和国法律的强制性规定在适用范围内予以尊重。
 
-### 10. 第三方开源组件
+### 9. 第三方开源组件
 
 | 组件 | 许可协议 | 用途 |
 | --- | --- | --- |
@@ -760,7 +760,7 @@ The Apache License 2.0 does not grant any trademark, trade-dress or brand rights
 
 ### 13.4 DLC Addon Statement
 
-The core panel is released free of charge under Apache-2.0. The source code of the DLC addons (Friends, Territory, etc.) is also publicly released under Apache-2.0 — anyone may freely obtain the source and compile it themselves. Pre-compiled JARs are distributed as a paid service: the fee only covers the convenience of obtaining pre-built binaries and does not replace or limit the rights granted by Apache-2.0 — users are fully entitled to compile themselves instead of paying.
+The core panel and all DLC addons (Friends, Territory, etc.) are released free of charge under Apache-2.0 — both source code and pre-compiled JARs are distributed at no cost and may be freely obtained and used by anyone.
 
 ### 13.5 Alpha Testing Disclaimer
 
@@ -793,7 +793,7 @@ Server administrators are obliged to inform players of the above data collection
 
 The interpretation, validity and dispute resolution of this Work and this notice are governed by the laws of the People's Republic of China. Disputes arising from this Work shall be resolved through friendly negotiation; if negotiation fails, either party may file a lawsuit with a court of competent jurisdiction at the creator's location.
 
-In the event of any inconsistency between Apache License 2.0 and PRC law, the enforceable Chinese legal provisions prevail, without affecting the substantive rights granted by Apache-2.0.
+This Work is primarily licensed under the Apache License 2.0. In the event of an irreconcilable conflict between Apache-2.0 and mandatory provisions of PRC law, the Apache-2.0 terms shall prevail, while the mandatory provisions of PRC law shall be respected within their applicable scope.
 
 ### 13.9 Third-Party Open Source Components
 
