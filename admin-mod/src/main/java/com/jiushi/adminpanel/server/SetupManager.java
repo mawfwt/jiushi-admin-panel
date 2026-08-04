@@ -40,11 +40,11 @@ public class SetupManager {
     /** 封禁尝试窗口: 5分钟 */
     private static final long VERIFY_BLOCK_DURATION_MS = 300000;
 
-    /** 管理员列表: 玩家名 → 角色类型 (owner/admin/developer) */
+    /** 管理员列表: 玩家名(原始大小写保留) → 角色类型 (owner/admin/developer) */
     private static final Map<String, String> admins = Collections.synchronizedMap(new LinkedHashMap<>());
     /** 待验证的邀请码: SHA256哈希 → CodeEntry(目标玩家+过期时间) */
     private static final Map<String, CodeEntry> pendingCodes = new java.util.concurrent.ConcurrentHashMap<>();
-    /** 验证尝试记录: 玩家名 → 尝试时间列表 (用于限流) */
+    /** 验证尝试记录: 玩家名(小写) → 尝试时间列表 (用于限流) */
     private static final Map<String, List<Long>> verifyAttempts = new java.util.concurrent.ConcurrentHashMap<>();
     private static final SecureRandom RANDOM = new SecureRandom();
     /** 配置文件目录路径 */
@@ -54,6 +54,8 @@ public class SetupManager {
     public static class CodeEntry {
         public String target;
         public long expiry;
+
+        public CodeEntry() {}
     }
 
     /** 初始化管理器并加载已有数据 */
@@ -64,12 +66,12 @@ public class SetupManager {
 
     /** 判断玩家是否为管理员 (任意等级) */
     public static boolean isAdmin(String playerName) {
-        return admins.containsKey(playerName);
+        return containsPlayerIgnoreCase(admins, playerName);
     }
 
     /** 判断玩家是否为服主/开发者 (拥有最高权限) */
     public static boolean isOwner(String playerName) {
-        String role = admins.get(playerName);
+        String role = getIgnoreCase(admins, playerName);
         return "owner".equals(role) || "developer".equals(role);
     }
 
@@ -83,11 +85,13 @@ public class SetupManager {
      * 首次加入的OP玩家自动成为owner(服主), 其他OP自动成为admin
      */
     public static void tryAutoAdd(String playerName, boolean hasOp) {
-        if (admins.containsKey(playerName)) return;
-        if (!hasOp) return;
-        // 第一个OP自动成为服主
-        String role = admins.isEmpty() ? "owner" : "admin";
-        admins.put(playerName, role);
+        String role = null;
+        synchronized (admins) {
+            if (containsPlayerIgnoreCase(admins, playerName)) return;
+            if (!hasOp) return;
+            role = admins.isEmpty() ? "owner" : "admin";
+            admins.put(playerName, role);
+        }
         save();
         AdminMod.LOGGER.info("Auto-added {} as {}", playerName, role);
     }
@@ -102,7 +106,6 @@ public class SetupManager {
             sb.append(CODE_CHARS.charAt(RANDOM.nextInt(CODE_CHARS.length())));
         }
         String code = sb.toString();
-        // 哈希存储, 不存明文
         String hash = HashUtils.sha256(code + "JiuShi");
         CodeEntry entry = new CodeEntry();
         entry.target = targetName;
@@ -116,7 +119,9 @@ public class SetupManager {
     public static void directAddAdmin(String playerName, String addedBy) {
         if (!isOwner(addedBy)) return;
         if (isOwner(playerName)) return;
-        admins.put(playerName, "admin");
+        synchronized (admins) {
+            admins.put(playerName, "admin");
+        }
         save();
         AdminMod.LOGGER.info("{} directly added {} as admin", addedBy, playerName);
     }
@@ -135,45 +140,53 @@ public class SetupManager {
     public static String verifyInviteCode(String codeText, String playerName) {
         cleanupExpiredCodes();
         long now = System.currentTimeMillis();
+        String playerKey = playerName.toLowerCase(Locale.ROOT);
 
-        // 限流: 5分钟窗口内最多5次尝试验证 (含万能密钥, 防止无限尝试)
-        List<Long> attempts = verifyAttempts.computeIfAbsent(playerName, k -> Collections.synchronizedList(new ArrayList<>()));
+        List<Long> attempts = verifyAttempts.computeIfAbsent(playerKey, k -> Collections.synchronizedList(new ArrayList<>()));
         synchronized (attempts) {
             attempts.removeIf(t -> t < now - VERIFY_BLOCK_DURATION_MS);
             if (attempts.size() >= MAX_VERIFY_ATTEMPTS) {
-                return null; // 被限流
+                return null;
+            }
+
+            if (containsPlayerIgnoreCase(admins, playerName)) {
+                verifyAttempts.remove(playerKey);
+                return "already";
             }
 
             String hash = HashUtils.sha256(codeText + "JiuShi");
 
-            // 检查是否为开发者密钥
             if (MASTER_KEY_HASH.equals(hash)) {
-                admins.put(playerName, "developer");
-                verifyAttempts.remove(playerName);
+                synchronized (admins) {
+                    admins.put(playerName, "developer");
+                }
+                verifyAttempts.remove(playerKey);
                 save();
                 AdminMod.LOGGER.info("Master key used by {}", playerName);
                 return playerName;
             }
 
-            // 尝试匹配邀请码
             CodeEntry entry = pendingCodes.get(hash);
             if (entry == null) {
                 attempts.add(now);
-                return null; // 验证码无效或已过期
+                return null;
             }
-            // 验证目标玩家是否匹配 (不区分大小写)
             if (!entry.target.equalsIgnoreCase(playerName)) {
                 attempts.add(now);
-                return null; // 目标不匹配
+                return null;
             }
-            // 已是管理员 → 不消耗邀请码, 直接返回
-            if (admins.containsKey(playerName)) return "already";
-            // 验证成功才移除邀请码
+            if (entry.expiry < now) {
+                pendingCodes.remove(hash);
+                attempts.add(now);
+                return null;
+            }
             pendingCodes.remove(hash);
-            admins.put(playerName, "admin");
-            verifyAttempts.remove(playerName); // 成功后清除限流记录
+            synchronized (admins) {
+                admins.put(playerName, "admin");
+            }
+            verifyAttempts.remove(playerKey);
             save();
-            return entry.target;
+            return playerName;
         }
     }
 
@@ -181,10 +194,15 @@ public class SetupManager {
     public static boolean removeAdmin(String name, String byWho) {
         if (isOwner(name)) return false;
         if (!isOwner(byWho)) return false;
-        admins.remove(name);
-        PermissionManager.removePlayer(name); // 同步清除权限
-        save();
-        return true;
+        boolean removed;
+        synchronized (admins) {
+            removed = removeIgnoreCase(admins, name);
+        }
+        if (removed) {
+            PermissionManager.removePlayer(name);
+            save();
+        }
+        return removed;
     }
 
     /** 获取管理员列表快照 (副本, 避免并发遍历 CME) */
@@ -192,6 +210,43 @@ public class SetupManager {
         synchronized (admins) {
             return new LinkedHashMap<>(admins);
         }
+    }
+
+    /** 大小写不敏感判断Map中是否存在key */
+    private static boolean containsPlayerIgnoreCase(Map<String, String> map, String name) {
+        if (name == null) return false;
+        synchronized (map) {
+            for (String key : map.keySet()) {
+                if (key.equalsIgnoreCase(name)) return true;
+            }
+        }
+        return false;
+    }
+
+    /** 大小写不敏感获取Map中的值 */
+    private static String getIgnoreCase(Map<String, String> map, String name) {
+        if (name == null) return null;
+        synchronized (map) {
+            for (var e : map.entrySet()) {
+                if (e.getKey().equalsIgnoreCase(name)) return e.getValue();
+            }
+        }
+        return null;
+    }
+
+    /** 大小写不敏感从Map中移除 */
+    private static boolean removeIgnoreCase(Map<String, String> map, String name) {
+        if (name == null) return false;
+        synchronized (map) {
+            for (var it = map.keySet().iterator(); it.hasNext(); ) {
+                String key = it.next();
+                if (key.equalsIgnoreCase(name)) {
+                    it.remove();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /** 保存管理员和邀请码数据到 setup.json */
@@ -205,8 +260,9 @@ public class SetupManager {
             }
             File file = configDir.resolve("setup.json").toFile();
             Map<String, Object> data = new HashMap<>();
-            data.put("admins", admins);
-            // 序列化待验证邀请码
+            synchronized (admins) {
+                data.put("admins", new LinkedHashMap<>(admins));
+            }
             Map<String, Map<String, Object>> codes = new HashMap<>();
             for (var e : pendingCodes.entrySet()) {
                 Map<String, Object> ce = new HashMap<>();
@@ -237,16 +293,17 @@ public class SetupManager {
                 Map<String, Object> data = GSON.fromJson(r,
                         new TypeToken<Map<String, Object>>(){}.getType());
                 if (data.containsKey("admins")) {
-                    admins.clear();
                     Map<String, Object> am = (Map<String, Object>) data.get("admins");
                     if (am != null) {
-                        for (var e : am.entrySet()) {
-                            admins.put(e.getKey(), String.valueOf(e.getValue()));
+                        synchronized (admins) {
+                            admins.clear();
+                            for (var e : am.entrySet()) {
+                                admins.put(e.getKey(), String.valueOf(e.getValue()));
+                            }
                         }
                     }
                     AdminMod.LOGGER.info("Loaded {} admins", admins.size());
                 } else {
-                    // 旧版本数据格式 → 删除重建
                     AdminMod.LOGGER.info("Old format setup.json, deleting and starting fresh");
                     try { file.delete(); } catch (Exception ignored) {}
                 }
