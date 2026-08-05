@@ -169,7 +169,7 @@ public class MainScreen extends Screen {
                     broadcast.setValue(""); setStatus("公告已发送");
                 }
             }).bounds(left + 275, rowY - 1, 45, 20).build());
-            rowY += 24;
+            rowY += 26;
 
             // === 定时公告 (消息 + 秒数 + 启动/停止) ===
             EditBox timed = new EditBox(font, left + 10, rowY, 180, 18, Component.literal("定时公告"));
@@ -227,7 +227,7 @@ public class MainScreen extends Screen {
                         inviteName.setValue("");
                     }
                 }).bounds(left + 175, rowY - 1, 40, 20).build());
-                rowY += 28;
+                rowY += 26;
                 // 在线玩家快捷选择按钮
                 if (minecraft != null && minecraft.getConnection() != null) {
                     var online = new ArrayList<>(minecraft.getConnection().getOnlinePlayers());
@@ -568,7 +568,7 @@ public class MainScreen extends Screen {
                 addRenderableWidget(Button.builder(Component.literal("TPA"), btn -> {
                     AdminMod.CHANNEL.sendToServer(new TpaPacket(TpaPacket.Action.REQUEST, pName));
                     setStatus("已请求 " + pName);
-                }).bounds(left + 260, py + 2, 40, 16).build());
+                }).bounds(left + 260, py, 40, 16).build());
             }
             tpaY += Math.max(0, players.size()) * 20 + 10;
         }
@@ -643,7 +643,7 @@ public class MainScreen extends Screen {
                     if (isAdmin()) {
                         int labelX = left + 10;
                         int r1 = contentTop - 8;
-                        int r2 = contentTop + 16;
+                        int r2 = contentTop + 18;
                         int r3 = contentTop + 42;
                         int r4 = r3 + 24;
                         if (isOwner()) r4 = r3 + 22 + 22;
