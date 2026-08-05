@@ -4,11 +4,11 @@ license = "Apache-2.0"
 
 [[mods]]
 modId = "jiushi_admin"
-version = "1.0.7-alpha"
+version = "1.0.8-alpha"
 displayName = "[九氏]游戏内面板"
 authors = "MA"
 description = '''[九氏]游戏内管理面板
-功能: 管理员分级(服主/OP/开发者) · 邀请码验证 · 广播与定时公告 · 金币系统 · 玩家商店 · 传送点与TPA · 踢出/封禁 · 兑换券 · DLC扩展支持'''
+功能: 管理员分级(服主/OP) · 邀请码验证 · 广播与定时公告 · 金币系统 · 玩家商店 · 传送点与TPA · 踢出/封禁 · 兑换券 · DLC扩展支持'''
 
 [[dependencies.jiushi_admin]]
     modId = "forge"

