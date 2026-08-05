@@ -4,5 +4,5 @@
 
 暂未发现已知问题。
 
-此前记录的全部问题已在 v1.0.10-alpha 和 v1.0.11-alpha 中修复，详见 [CHANGELOG.md](./CHANGELOG.md)。
+最近修复：v1.0.12-alpha 修正了 6 处 GUI 文字标签与控件重叠/偏移的问题（MainScreen 4 处、TerritoryManageScreen 1 处、TerritoryCreateScreen 1 处）。
 

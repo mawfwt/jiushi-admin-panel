@@ -107,7 +107,7 @@ public class TerritoryManageScreen extends Screen {
         g.renderOutline(left, 20, PANEL_W, height - 60, 0xFF444444);
         g.drawCenteredString(font, Component.literal("-- 领地管理 --"), width / 2, 18, 0xFF55AAFF);
         g.drawCenteredString(font, Component.literal("□=显示边界(关闭面板后保留)  ■=已开启"),
-                width / 2, 30, 0xFF888888);
+                width / 2, 24, 0xFF888888);
         if (statusTimer > 0) g.drawCenteredString(font, Component.literal(statusText),
                 width / 2, height - 25, 0xFF55FF55);
         super.render(g, mouseX, mouseY, partial);

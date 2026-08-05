@@ -656,9 +656,9 @@ public class MainScreen extends Screen {
                 case ADMIN -> {
                     if (isAdmin()) {
                         int labelX = left + 10;
-                        int r1 = contentTop + 6;
-                        int r2 = contentTop + 30;
-                        int r3 = contentTop + 56;
+                        int r1 = contentTop - 2;
+                        int r2 = contentTop + 22;
+                        int r3 = contentTop + 48;
                         int r4 = r3 + 24;
                         if (isOwner()) r4 = r3 + 22 + 22;
                         g.drawString(font, "§7▶ 公告广播", labelX, r1, 0xFFAAAAAA);
@@ -709,8 +709,8 @@ public class MainScreen extends Screen {
                         }
                     } else {
                         g.drawString(font, "余额: " + playerMoney + " 币",
-                                left + 8, contentTop + 13, 0xFFFFAA00);
-                        g.drawString(font, "金额/券额:", left + 8, contentTop + 33, 0xFFAAAAAA);
+                                left + 8, contentTop + 5, 0xFFFFAA00);
+                        g.drawString(font, "金额/券额:", left + 8, contentTop + 25, 0xFFAAAAAA);
                         int y = isAdmin() ? contentTop + 75 : contentTop + 53;
                         for (var l : shopListings) {
                             if (y > height - 60) break;
@@ -726,7 +726,7 @@ public class MainScreen extends Screen {
                     }
                 }
                 case TELEPORT -> {
-                    g.drawString(font, "传送点名:", left + 8, contentTop + 13, 0xFFAAAAAA);
+                    g.drawString(font, "传送点名:", left + 8, contentTop + 5, 0xFFAAAAAA);
                     int y = contentTop + 34;
                     g.drawString(font, "TPA:", left + 8, y, 0xFFAAAAAA);
                     if (minecraft != null && minecraft.getConnection() != null) {

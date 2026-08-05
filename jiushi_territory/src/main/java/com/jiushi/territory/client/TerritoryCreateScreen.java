@@ -113,7 +113,7 @@ public class TerritoryCreateScreen extends Screen {
         if (TerritorySelectionTracker.ready) {
             int s = TerritorySelectionTracker.sizeXZ();
             String info = "XZ差总和: " + s + (s > 128 ? " §c超限!" : " §aOK");
-            gfx.drawCenteredString(font, Component.literal(info), width / 2, 30,
+            gfx.drawCenteredString(font, Component.literal(info), width / 2, 24,
                     s > 128 ? 0xFFFF5555 : 0xFF55FF55);
         }
         if (statusTimer > 0) gfx.drawCenteredString(font, Component.literal(statusText),
