@@ -66,8 +66,8 @@ public class FriendManager {
         return 0;
     }
 
-    /** 接受好友请求: 移除pending → 双向添加好友 → 保存 */
-    public static boolean acceptRequest(String player, String from) {
+    /** 接受好友请求: 移除pending → 添加好友 → 保存 */
+    public static synchronized boolean acceptRequest(String player, String from) {
         player = norm(player);
         from = norm(from);
         Set<String> pendingList = pending.get(player);
@@ -75,6 +75,7 @@ public class FriendManager {
         pendingList.remove(from);
         addFriend(player, from);
         save();
+        savePending();
         return true;
     }
 

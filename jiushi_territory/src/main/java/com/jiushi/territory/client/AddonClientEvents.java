@@ -64,8 +64,6 @@ public class AddonClientEvents {
 
         leftWasDown = leftDown;
         rightWasDown = rightDown;
-        if (!leftDown) leftWasDown = false;
-        if (!rightDown) rightWasDown = false;
     }
 
     /** 左键: 设置选区点 */

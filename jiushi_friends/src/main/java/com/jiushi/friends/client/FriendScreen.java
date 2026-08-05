@@ -171,9 +171,9 @@ public class FriendScreen extends Screen {
 
     /** 客户端数据中转 (与主面板 ClientData 同模式) */
     public static class FriendClientData {
-        public static List<FriendEntry> list;
-        public static List<String> pendingFrom;
-        public static boolean ready;
+        public static volatile List<FriendEntry> list;
+        public static volatile List<String> pendingFrom;
+        public static volatile boolean ready;
     }
 
     /**

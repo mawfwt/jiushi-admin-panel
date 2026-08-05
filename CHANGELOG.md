@@ -4,6 +4,17 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.0.11-alpha] - 2026-08-05
+
+### 修复
+
+- **好友接受请求持久化**：`acceptRequest` 补充 `savePending()` 调用，重启后已接受的请求不再残留
+- **好友接受请求并发**：`acceptRequest` 加 `synchronized`，与 `sendRequest` 锁策略一致
+- **客户端数据 volatile**：`FriendClientData` 和 `TerritoryClientData` 字段加 `volatile`，修复网络线程写入后渲染线程不可见
+- **领地白名单线程安全**：`Territory.allowed` 改用 `ConcurrentHashMap.newKeySet()`
+- **定时公告计数器溢出**：`AdminManager.tickCounter` 改为 `long`
+- **选区跟踪死代码**：删除 `AddonClientEvents` 中冗余赋值逻辑
+
 ## [1.0.10-alpha] - 2026-08-05
 
 ### 修复

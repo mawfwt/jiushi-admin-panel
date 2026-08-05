@@ -18,7 +18,7 @@ public class AdminManager {
     /** 广播间隔秒数 */
     private static volatile int intervalSeconds;
     /** tick 计数器 (每秒20ticks) */
-    private static volatile int tickCounter;
+    private static volatile long tickCounter;
     /** 是否正在广播 */
     private static volatile boolean active;
 

@@ -313,7 +313,7 @@ public class TerritoryScreen extends Screen {
 
     /** 客户端数据中转 */
     public static class TerritoryClientData {
-        public static List<TerritoryInfo> list;
-        public static boolean ready;
+        public static volatile List<TerritoryInfo> list;
+        public static volatile boolean ready;
     }
 }

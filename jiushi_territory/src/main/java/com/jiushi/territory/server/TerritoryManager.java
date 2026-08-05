@@ -59,7 +59,7 @@ public class TerritoryManager {
         public String world;        // 所属世界 ResourceLocation
         public int x1, z1, x2, z2; // 选区对角坐标 (仅XZ, Y不限)
         public boolean official;    // 是否为官方领地
-        public Set<String> allowed = new HashSet<>(); // 权限白名单
+        public Set<String> allowed = ConcurrentHashMap.newKeySet(); // 权限白名单
 
         /** 判断坐标是否在此领地范围内 (仅XZ平面) */
         public boolean contains(String worldCheck, BlockPos pos) {
