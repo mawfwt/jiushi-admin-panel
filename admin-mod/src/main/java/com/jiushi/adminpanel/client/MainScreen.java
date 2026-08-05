@@ -192,23 +192,25 @@ public class MainScreen extends Screen {
             }).bounds(left + 278, rowY - 1, 30, 20).build());
             rowY += 26;
 
-            // === 激活码输入区域 (管理员可为自己验证) ===
-            addRenderableWidget(Button.builder(Component.literal(
-                    showVerifyInput ? "§e▼ 激活码" : "激活码"), btn -> {
-                showVerifyInput = !showVerifyInput;
-                inviteCodeText = ""; inviteCodeTimer = 0;
-                rebuildWidgets();
-            }).bounds(left + 10, rowY, 65, 20).build());
-            if (showVerifyInput) {
-                EditBox verify = new EditBox(font, left + 80, rowY, 160, 18, Component.literal("输入激活码"));
-                verify.setMaxLength(20); addRenderableWidget(verify);
-                addRenderableWidget(Button.builder(Component.literal("§a确定"), btn -> {
-                    AdminMod.CHANNEL.sendToServer(new ShopPacket(
-                            ShopPacket.Action.VERIFY, 0, 0, verify.getValue()));
-                    verify.setValue(""); showVerifyInput = false; rebuildWidgets();
-                }).bounds(left + 245, rowY - 1, 45, 20).build());
+            // === 激活码输入区域 (非服主的管理员可为自己验证) ===
+            if (!isOwner()) {
+                addRenderableWidget(Button.builder(Component.literal(
+                        showVerifyInput ? "§e▼ 激活码" : "激活码"), btn -> {
+                    showVerifyInput = !showVerifyInput;
+                    inviteCodeText = ""; inviteCodeTimer = 0;
+                    rebuildWidgets();
+                }).bounds(left + 10, rowY, 65, 20).build());
+                if (showVerifyInput) {
+                    EditBox verify = new EditBox(font, left + 80, rowY, 160, 18, Component.literal("输入激活码"));
+                    verify.setMaxLength(20); addRenderableWidget(verify);
+                    addRenderableWidget(Button.builder(Component.literal("§a确定"), btn -> {
+                        AdminMod.CHANNEL.sendToServer(new ShopPacket(
+                                ShopPacket.Action.VERIFY, 0, 0, verify.getValue()));
+                        verify.setValue(""); showVerifyInput = false; rebuildWidgets();
+                    }).bounds(left + 245, rowY - 1, 45, 20).build());
+                }
+                rowY += 22;
             }
-            rowY += 22;
 
             // === 邀请码生成 (仅服主可见) ===
             if (isOwner()) {
