@@ -138,7 +138,6 @@ public class ShopManager {
         save();
         return PurchaseResult.SUCCESS;
     }
-    }
 
     /** 保存商品数据到 shop.json */
     private static synchronized void save() {
