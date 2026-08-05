@@ -4,6 +4,17 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.0.12-alpha] - 2026-08-05
+
+### 修复
+
+- **清理领地 DLC 旧协议残留**：`gradle.properties` 中残留了早期（0.0.3 之前已废除）的 MIT 声明，实际所有模块早已统一为 Apache-2.0。本次排查许可证一致性时发现并修正该疏漏
+- **构建依赖保护**：`.gitignore` 中为 `jiushi_friends/libs/` 和 `jiushi_territory/libs/` 添加例外规则，确保 clone 后可构建 DLC 模块
+
+### 其他
+
+- 加入 MC 中文 MC 百科
+
 ## [1.0.11-alpha] - 2026-08-05
 
 ### 修复

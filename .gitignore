@@ -19,6 +19,8 @@ out/
 
 # ===== 编译依赖 (libs 内的 admin jar 由源码构建, 不入库) =====
 libs/*.jar
+!jiushi_friends/libs/
+!jiushi_territory/libs/
 *.jar
 
 # ===== 系统文件 =====
