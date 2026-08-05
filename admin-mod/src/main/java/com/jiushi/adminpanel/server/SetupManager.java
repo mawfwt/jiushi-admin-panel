@@ -15,9 +15,8 @@ import java.util.*;
 /**
  * 管理员注册/验证管理器
  * <p>
- * 三级管理员体系:
+ * 管理员体系:
  * <ul>
- *   <li><b>developer</b> - 面板开发者, 通过硬编码master key验证, 拥有服主权限</li>
  *   <li><b>owner</b> - 服主, 首次OP玩家自动晋升, 可生成邀请码/添加管理员/设置权限</li>
  *   <li><b>admin</b> - 管理员(OP), 通过邀请码激活, 拥有基本管理功能</li>
  * </ul>
@@ -27,7 +26,6 @@ import java.util.*;
 public class SetupManager {
 
     private static final Gson GSON = new Gson();
-    /** 硬编码的开发者密钥 SHA256 哈希 (原文: ??? + "JiuShi" 盐) */
     private static final String MASTER_KEY_HASH = "d6b81d28afd95de58f4b6f21b1b5e79f96df44853f1e865c7307731f0d81c543";
     /** 邀请码字符集 (Base32去除了易混淆字符: I, O, 1, 0) */
     private static final String CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
@@ -40,7 +38,7 @@ public class SetupManager {
     /** 封禁尝试窗口: 5分钟 */
     private static final long VERIFY_BLOCK_DURATION_MS = 300000;
 
-    /** 管理员列表: 玩家名(原始大小写保留) → 角色类型 (owner/admin/developer) */
+    /** 管理员列表: 玩家名(原始大小写保留) → 角色类型 */
     private static final Map<String, String> admins = Collections.synchronizedMap(new LinkedHashMap<>());
     /** 待验证的邀请码: SHA256哈希 → CodeEntry(目标玩家+过期时间) */
     private static final Map<String, CodeEntry> pendingCodes = new java.util.concurrent.ConcurrentHashMap<>();
@@ -69,12 +67,12 @@ public class SetupManager {
         return containsPlayerIgnoreCase(admins, playerName);
     }
 
-    /** 判断玩家是否为服主/开发者 (拥有最高权限) */
+    /** 判断玩家是否拥有最高权限 */
     public static boolean isOwner(String playerName) {
         return "owner".equals(getRole(playerName)) || "developer".equals(getRole(playerName));
     }
 
-    /** 大小写不敏感获取玩家角色 (owner/admin/developer), 未注册返回 null */
+    /** 大小写不敏感获取玩家角色, 未注册返回 null */
     public static String getRole(String playerName) {
         return getIgnoreCase(admins, playerName);
     }
@@ -194,7 +192,7 @@ public class SetupManager {
         }
     }
 
-    /** 移除管理员 (只有服主可操作, 服主/开发者不可移除) */
+    /** 移除管理员 (只有服主可操作) */
     public static boolean removeAdmin(String name, String byWho) {
         if (isOwner(name)) return false;
         if (!isOwner(byWho)) return false;

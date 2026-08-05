@@ -51,7 +51,7 @@ public class ShopPacket {
     boolean verified;   // 当前玩家是否已验证为管理员
     String statusMsg;   // 状态提示消息
     int money;          // 玩家当前金币
-    String role;        // 玩家管理员角色 (owner/admin/developer)
+    String role;        // 玩家管理员角色
     List<MainScreen.AdminInfo> adminList; // 完整管理员列表 (用于OP管理页)
 
     public ShopPacket() {}

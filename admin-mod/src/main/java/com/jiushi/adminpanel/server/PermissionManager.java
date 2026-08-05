@@ -15,7 +15,7 @@ import java.util.*;
  * 权限管理器
  * <p>
  * 为每个管理员提供细粒度权限控制.
- * 服主(owner)和开发者(developer)拥有全部权限, 不受权限检查限制.
+ * 服主(owner)拥有全部权限, 不受权限检查限制.
  * 管理员(admin)默认无任何细粒度权限, 需服主通过 /admin perm 命令授予.
  * <p>
  * 数据结构: 玩家名 → (权限名 → true/false)
@@ -35,7 +35,7 @@ public class PermissionManager {
 
     /**
      * 检查玩家是否有指定权限.
-     * 服主/开发者直接返回 true.
+     * 服主直接返回 true.
      * 非管理员返回 false.
      */
     public static boolean can(String playerName, String perm) {

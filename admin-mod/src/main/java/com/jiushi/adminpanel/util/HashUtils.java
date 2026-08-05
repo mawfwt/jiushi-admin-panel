@@ -10,7 +10,6 @@ import java.security.NoSuchAlgorithmException;
  * 提供 SHA-256 哈希计算功能, 用于:
  * 1. 管理员邀请码验证 (码+盐)
  * 2. 兑换券防伪
- * 3. 开发者密钥验证
  */
 public final class HashUtils {
 

@@ -52,7 +52,7 @@ public class MainScreen extends Screen {
     private static List<ShopManager.ShopListing> shopListings = new ArrayList<>();
     private static boolean shopVerified;        // 当前是否已验证为管理员
     private static int playerMoney;             // 当前玩家金币
-    private static String playerRole = "";      // 当前玩家角色 (owner/admin/developer)
+    private static String playerRole = "";      // 当前玩家角色
     private static Map<String, WarpManager.WarpPoint> warps = new LinkedHashMap<>();
     private static List<AdminInfo> adminList = new ArrayList<>();
     private int lastPlayerCount = -1;           // 上一次渲染的在线玩家数 (用于检测变化)
@@ -79,7 +79,7 @@ public class MainScreen extends Screen {
     /** 管理员信息摘要 (用于OP管理页显示) */
     public static class AdminInfo {
         public String name;
-        public String role; // "owner" / "admin" / "developer"
+        public String role;
     }
 
     public MainScreen() {
