@@ -354,24 +354,6 @@ public class MainScreen extends Screen {
 
     private void buildOpManageWidgets() {
         addTabBar();
-        int y = contentTop + 8;
-        if (isOwner() && minecraft != null && minecraft.getConnection() != null) {
-            var players = new ArrayList<>(minecraft.getConnection().getOnlinePlayers());
-            for (int i = 0; i < players.size(); i++) {
-                final String pName = players.get(i).getProfile().getName();
-                if (pName.equals(minecraft.player.getName().getString())) continue;
-                int py = y + i * 18;
-                if (py > height - 80) break;
-                // 在线玩家快捷邀请按钮
-                addRenderableWidget(Button.builder(Component.literal("邀请"), btn -> {
-                    inviteCodeText = ""; inviteCodeTarget = pName; inviteCodeTimer = 0;
-                    AdminMod.CHANNEL.sendToServer(new AdminPacket(
-                            AdminPacket.Action.ADD_OP_INVITE, pName, "", 0));
-                    setStatus("正在生成...");
-                }).bounds(left + 250, py, 35, 16).build());
-            }
-            y += Math.max(0, players.size()) * 18 + 10;
-        }
     }
 
     // ---- 标签页5: 扩展 (DLC注册入口) ----
@@ -633,7 +615,7 @@ public class MainScreen extends Screen {
 
         // OP管理页特殊渲染: 管理员列表含在线状态
         if (currentTab == Tab.OP_MANAGE) {
-            g.drawString(font, "在线玩家 (点击邀请):", left + 8, contentTop + 13, 0xFFAAAAAA);
+            g.drawString(font, "在线玩家:", left + 8, contentTop + 13, 0xFFAAAAAA);
             int z = contentTop + 45;
             g.drawString(font, "合作管理组:", left + 8, z, 0xFF888888); z += 16;
             java.util.Set<String> onlineNames = new HashSet<>();
