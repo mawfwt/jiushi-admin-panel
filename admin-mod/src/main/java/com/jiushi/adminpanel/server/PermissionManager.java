@@ -9,7 +9,7 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 权限管理器
@@ -25,7 +25,7 @@ import java.util.*;
 public class PermissionManager {
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     /** 权限数据: 玩家名 → (权限名 → 布尔值) */
-    private static final Map<String, Map<String, Boolean>> permissions = Collections.synchronizedMap(new LinkedHashMap<>());
+    private static final Map<String, Map<String, Boolean>> permissions = new ConcurrentHashMap<>();
     private static Path configDir;
 
     public static void init(Path path) {
@@ -40,7 +40,7 @@ public class PermissionManager {
      */
     public static boolean can(String playerName, String perm) {
         if (!SetupManager.isAdmin(playerName)) return false;
-        if (SetupManager.isOwner(playerName)) return true; // 服主/开发者拥有全部权限
+        if (SetupManager.isOwner(playerName)) return true;
         Map<String, Boolean> perms = permissions.get(playerName);
         if (perms == null) return false;
         return perms.getOrDefault(perm, false);

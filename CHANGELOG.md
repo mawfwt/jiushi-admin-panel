@@ -4,6 +4,24 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.0.9-alpha] - 2026-08-05
+
+### 修复
+
+- **好友请求反向条目污染**：发送请求时错误地向 pending map 写入双向条目，导致 `getPendingRequests()` 返回错误数据
+- **领地 Tick 计数器 int 溢出风险**：改为 long，移除离开领地后不必要的跟踪数据清理抖动
+- **爆炸事件 NPE**：`getDamageSource()` 可能返回 null，改为判空后调用
+- **活塞世界解析**：改用 `LevelAccessor.dimension().location()` 直接获取，兼容模组维度
+- **踢出/封禁 NPE**：增加 `targetPlayer.connection` 空检查，踢除离线玩家给出反馈
+- **传送点非法维度崩溃**：`ResourceLocation` 构造加 try-catch，异常时返回提示
+- **JSON 加载容错**：SetupManager 邀请码到期时间校验 Number 类型；BanManager 废弃 JSON 双重往返
+- **商品下架空声明**：商品不存在时不再误报"已下架"
+- **ShopManager 双重锁**：移除 purchaseItem 中冗余的 `synchronized` 外层
+- **TPA 布局间距修复**：传送页 TPA 列表与传送点列表间距修正
+- **管理员自加钱日志**：MONEY 操作自加时写入审计日志
+- **兑换券先扣款**：改为先存储凭证再扣款，防止中途崩溃丢钱
+- **权限表改为 ConcurrentHashMap**：避免 synchronizedMap 全局锁瓶颈
+
 ## [1.0.8-alpha] - 2026-08-05
 
 ### 变更

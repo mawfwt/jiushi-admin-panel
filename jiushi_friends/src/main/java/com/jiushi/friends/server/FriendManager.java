@@ -48,21 +48,20 @@ public class FriendManager {
 
     /**
      * 发送好友请求
-     * @return 0=成功, 1=不能添加自己, 2=已经是好友, 3=对方已发送请求给你, 4=你已经发送过请求
+     * @return 0=成功, 1=不能添加自己, 2=已经是好友, 3=你已经发送过请求, 4=对方已发送请求给你
      */
     public static int sendRequest(String from, String target) {
         from = norm(from);
         target = norm(target);
         if (from.equals(target)) return 1; // 不能加自己 (小写比较)
         if (isFriend(from, target)) return 2; // 已经是好友
-        // 检查对方是否已经向自己发送了请求
-        Set<String> pendingList = pending.computeIfAbsent(target, k -> ConcurrentHashMap.newKeySet());
-        if (pendingList.contains(from)) return 3; // 对方已发来请求
+        // 检查对方是否已经向自己发送了请求 (只读, 不创建新条目)
+        Set<String> existingFromTarget = pending.get(from);
+        if (existingFromTarget != null && existingFromTarget.contains(target)) return 4;
         // 检查自己是否已经向对方发送了请求
-        Set<String> sentList = pending.computeIfAbsent(from, k -> ConcurrentHashMap.newKeySet());
-        if (sentList.contains(target)) return 4; // 已发送待处理
+        Set<String> pendingList = pending.computeIfAbsent(target, k -> ConcurrentHashMap.newKeySet());
+        if (pendingList.contains(from)) return 3;
         pendingList.add(from);
-        sentList.add(target);
         savePending();
         return 0;
     }
@@ -74,9 +73,6 @@ public class FriendManager {
         Set<String> pendingList = pending.get(player);
         if (pendingList == null || !pendingList.contains(from)) return false;
         pendingList.remove(from);
-        // 清理发送方的pending记录
-        Set<String> sentList = pending.get(from);
-        if (sentList != null) sentList.remove(player);
         addFriend(player, from); // 双向添加
         addFriend(from, player);
         savePending();
@@ -90,8 +86,6 @@ public class FriendManager {
         Set<String> pendingList = pending.get(player);
         if (pendingList == null || !pendingList.contains(from)) return false;
         pendingList.remove(from);
-        Set<String> sentList = pending.get(from);
-        if (sentList != null) sentList.remove(player);
         savePending();
         return true;
     }

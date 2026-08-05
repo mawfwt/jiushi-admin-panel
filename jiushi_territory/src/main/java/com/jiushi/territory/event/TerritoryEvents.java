@@ -41,8 +41,8 @@ public class TerritoryEvents {
     private static final Map<UUID, GameType> adventureForced = new ConcurrentHashMap<>();
     /** 上次检查的玩家坐标 (用于判断是否需要重新检查) */
     private static final Map<UUID, BlockPos> lastCheckedPos = new ConcurrentHashMap<>();
-    /** 每个玩家的 tick 计数器 (每10tick检查一次) */
-    private static final Map<UUID, Integer> tickCounters = new ConcurrentHashMap<>();
+    /** 每个玩家的 tick 计数器 */
+    private static final Map<UUID, Long> tickCounters = new ConcurrentHashMap<>();
     /** 领地检查间隔 (tick), 10tick=0.5秒 */
     private static final int CHECK_INTERVAL_TICKS = 10;
     /** 移动阈值平方, 移动小于1格不重新检查 */
@@ -126,10 +126,7 @@ public class TerritoryEvents {
     @SubscribeEvent
     public static void onPiston(PistonEvent.Pre event) {
         if (event.getLevel().isClientSide()) return;
-        String world = "";
-        if (event.getLevel() instanceof net.minecraft.world.level.Level level) {
-            world = level.dimension().location().toString();
-        }
+        String world = event.getLevel().dimension().location().toString();
         BlockPos pistonPos = event.getPos();
         TerritoryManager.Territory pistonT = TerritoryManager.getTerritoryAt(world, pistonPos);
         Direction dir = event.getDirection();
@@ -152,7 +149,9 @@ public class TerritoryEvents {
     public static void onExplosion(ExplosionEvent.Detonate event) {
         if (event.getLevel().isClientSide) return;
         String world = event.getLevel().dimension().location().toString();
-        Entity source = event.getExplosion().getDamageSource().getEntity();
+        Entity source = null;
+        var ds = event.getExplosion().getDamageSource();
+        if (ds != null) source = ds.getEntity();
         event.getAffectedBlocks().removeIf(pos -> {
             TerritoryManager.Territory t = TerritoryManager.getTerritoryAt(world, pos);
             if (t == null) return false; // 不在领地内 → 保留
@@ -177,23 +176,21 @@ public class TerritoryEvents {
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) return;
         if (!(event.player instanceof ServerPlayer player)) return;
-        if (player.level().isClientSide) return; // 仅在服务端处理
+        if (player.level().isClientSide) return;
 
         UUID id = player.getUUID();
-        int counter = tickCounters.getOrDefault(id, 0) + 1;
+        long counter = tickCounters.getOrDefault(id, 0L) + 1;
         tickCounters.put(id, counter);
-        if (counter % CHECK_INTERVAL_TICKS != 0) return; // 10tick才检查
+        if (counter % CHECK_INTERVAL_TICKS != 0) return;
 
         BlockPos currentPos = player.blockPosition();
         BlockPos lastPos = lastCheckedPos.get(id);
-        // 移动小于阈值 → 跳过检查
         if (lastPos != null && currentPos.distSqr(lastPos) < MOVE_THRESHOLD * MOVE_THRESHOLD) return;
         lastCheckedPos.put(id, currentPos);
 
         var territory = TerritoryManager.getTerritoryAt(
                 player.level().dimension().location().toString(), currentPos);
 
-        // 只在官方领地 + 无权限时强制冒险模式
         boolean shouldForce = territory != null && territory.official
                 && !territory.owner.equals(player.getGameProfile().getName())
                 && !territory.allowed.contains(player.getGameProfile().getName())
@@ -206,13 +203,12 @@ public class TerritoryEvents {
                 player.setGameMode(GameType.ADVENTURE);
             }
         } else {
-            // 离开领地或不再需要强制 → 恢复
-            GameType original = adventureForced.remove(id);
-            if (original != null) {
-                player.setGameMode(original);
+            if (adventureForced.containsKey(id)) {
+                GameType original = adventureForced.remove(id);
+                if (original != null) {
+                    player.setGameMode(original);
+                }
             }
-            lastCheckedPos.remove(id);
-            tickCounters.remove(id);
         }
     }
 

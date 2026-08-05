@@ -183,13 +183,17 @@ public class WarpPacket {
                             break;
                         }
                         // 解析维度 ResourceKey → 获取 ServerLevel → 执行传送
-                        ServerLevel targetLevel = player.getServer().getLevel(
-                                ResourceKey.create(Registries.DIMENSION, new ResourceLocation(wp.dimension)));
-                        if (targetLevel != null) {
-                            player.teleportTo(targetLevel, wp.x, wp.y, wp.z, wp.yaw, wp.pitch);
-                            player.sendSystemMessage(Component.literal("§a已传送到 " + warpName));
-                        } else {
-                            player.sendSystemMessage(Component.literal("§c目标维度不存在"));
+                        try {
+                            ServerLevel targetLevel = player.getServer().getLevel(
+                                    ResourceKey.create(Registries.DIMENSION, new ResourceLocation(wp.dimension)));
+                            if (targetLevel != null) {
+                                player.teleportTo(targetLevel, wp.x, wp.y, wp.z, wp.yaw, wp.pitch);
+                                player.sendSystemMessage(Component.literal("§a已传送到 " + warpName));
+                            } else {
+                                player.sendSystemMessage(Component.literal("§c目标维度不存在"));
+                            }
+                        } catch (Exception e) {
+                            player.sendSystemMessage(Component.literal("§c维度数据异常"));
                         }
                     } else {
                         player.sendSystemMessage(Component.literal("§c传送点 " + warpName + " 不存在"));

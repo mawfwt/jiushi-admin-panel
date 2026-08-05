@@ -307,7 +307,11 @@ public class SetupManager {
                             CodeEntry entry = new CodeEntry();
                             entry.target = String.valueOf(ce.get("target"));
                             Object exp = ce.get("expiry");
-                            entry.expiry = ((Number) exp).longValue();
+                            if (exp instanceof Number) {
+                                entry.expiry = ((Number) exp).longValue();
+                            } else {
+                                continue;
+                            }
                             pendingCodes.put(e.getKey(), entry);
                         }
                     }

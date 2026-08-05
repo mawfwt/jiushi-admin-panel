@@ -52,9 +52,6 @@ public class VoucherManager {
             return;
         }
         MoneyManager.takeMoney(player, amount);
-        AdminMod.LOGGER.info("{} created voucher worth {} coins, balance was {}",
-                player.getGameProfile().getName(), amount, current);
-        // 生成唯一ID → 拼接金额+盐 → SHA256哈希作为兑换凭证
         String codeId = generateCodeId();
         String rawCode = codeId + amount + "JiuShi";
         String hash = HashUtils.sha256(rawCode);

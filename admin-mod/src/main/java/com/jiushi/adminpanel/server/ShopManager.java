@@ -107,39 +107,37 @@ public class ShopManager {
      * 流程: 查找商品 → 检查库存/余额 → 扣款+转账给卖家 → 还原NBT为物品 → 放入背包 → 减库存
      */
     public static PurchaseResult purchaseItem(ServerPlayer buyer, int listingId) {
+        ShopListing listing;
         synchronized (listings) {
-            ShopListing listing = getListing(listingId);
-            if (listing == null) return PurchaseResult.NOT_FOUND;
-            if (listing.quantity <= 0 || listing.price <= 0) return PurchaseResult.SOLD_OUT;
-
-            int balance = MoneyManager.getMoney(buyer);
-            if (balance < listing.price) return PurchaseResult.INSUFFICIENT_FUNDS;
-
-            try {
-                // 从NBT还原物品
-                net.minecraft.nbt.CompoundTag tag = net.minecraft.nbt.TagParser.parseTag(listing.itemNbt);
-                ItemStack stack = ItemStack.of(tag);
-                // 尝试放入背包, 满则掉落在地
-                if (!buyer.getInventory().add(stack)) {
-                    buyer.drop(stack, false);
-                }
-            } catch (Exception e) {
-                AdminMod.LOGGER.error("Failed to parse item NBT for listing {}", listingId, e);
-                return PurchaseResult.DATA_ERROR;
-            }
-
-            // 扣钱 → 转账给卖家
-            MoneyManager.takeMoney(buyer, listing.price);
-            MoneyManager.addMoneyByName(buyer.getServer(), listing.sellerName, listing.price);
-
-            // 减库存, 售罄则移除
-            listing.quantity--;
-            if (listing.quantity <= 0) {
-                listings.remove(listing);
-            }
-            save();
-            return PurchaseResult.SUCCESS;
+            listing = listings.stream().filter(l -> l.id == listingId).findFirst().orElse(null);
         }
+        if (listing == null) return PurchaseResult.NOT_FOUND;
+        if (listing.quantity <= 0 || listing.price <= 0) return PurchaseResult.SOLD_OUT;
+
+        int balance = MoneyManager.getMoney(buyer);
+        if (balance < listing.price) return PurchaseResult.INSUFFICIENT_FUNDS;
+
+        try {
+            net.minecraft.nbt.CompoundTag tag = net.minecraft.nbt.TagParser.parseTag(listing.itemNbt);
+            ItemStack stack = ItemStack.of(tag);
+            if (!buyer.getInventory().add(stack)) {
+                buyer.drop(stack, false);
+            }
+        } catch (Exception e) {
+            AdminMod.LOGGER.error("Failed to parse item NBT for listing {}", listingId, e);
+            return PurchaseResult.DATA_ERROR;
+        }
+
+        MoneyManager.takeMoney(buyer, listing.price);
+        MoneyManager.addMoneyByName(buyer.getServer(), listing.sellerName, listing.price);
+
+        listing.quantity--;
+        if (listing.quantity <= 0) {
+            listings.remove(listing);
+        }
+        save();
+        return PurchaseResult.SUCCESS;
+    }
     }
 
     /** 保存商品数据到 shop.json */

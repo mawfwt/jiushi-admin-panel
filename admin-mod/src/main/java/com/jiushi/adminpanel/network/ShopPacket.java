@@ -260,12 +260,15 @@ public class ShopPacket {
                             break;
                         }
                         if (targetListing.quantity > 0) {
-                            returnItemToSeller(player, targetListing); // 退还剩余物品
+                            returnItemToSeller(player, targetListing);
                         }
+                        ShopManager.removeListing(index);
+                        pendingStatusMessages.put(player.getUUID(), "§a商品已下架");
+                        player.sendSystemMessage(Component.literal("§a商品已下架"));
+                    } else {
+                        pendingStatusMessages.put(player.getUUID(), "§c商品不存在");
+                        player.sendSystemMessage(Component.literal("§c商品不存在"));
                     }
-                    ShopManager.removeListing(index);
-                    pendingStatusMessages.put(player.getUUID(), "§a商品已下架");
-                    player.sendSystemMessage(Component.literal("§a商品已下架"));
                     buildAndSendListResponse(player, pendingStatusMessages.remove(player.getUUID()));
                     break;
                 }

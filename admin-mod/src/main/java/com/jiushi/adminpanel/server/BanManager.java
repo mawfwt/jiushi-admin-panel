@@ -118,10 +118,14 @@ public class BanManager {
                 Map<String, Object> data = GSON.fromJson(r,
                         new TypeToken<Map<String, Object>>(){}.getType());
                 if (data != null && data.get("bans") instanceof Map<?, ?> raw) {
-                    String json = GSON.toJson(raw);
-                    Map<String, BanEntry> loaded = GSON.fromJson(json,
-                            new TypeToken<Map<String, BanEntry>>(){}.getType());
-                    if (loaded != null) bans.putAll(loaded);
+                    for (var entry : raw.entrySet()) {
+                        if (entry.getValue() instanceof Map<?, ?> m) {
+                            BanEntry be = new BanEntry(
+                                    String.valueOf(m.get("reason")),
+                                    m.get("expiry") instanceof Number n ? n.longValue() : 0);
+                            bans.put(String.valueOf(entry.getKey()), be);
+                        }
+                    }
                 }
             }
         } catch (Exception e) {

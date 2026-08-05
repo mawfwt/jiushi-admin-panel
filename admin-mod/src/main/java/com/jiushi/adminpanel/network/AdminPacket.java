@@ -91,10 +91,11 @@ public class AdminPacket {
                         break;
                     }
                     ServerPlayer targetPlayer = player.getServer().getPlayerList().getPlayerByName(target);
-                    if (targetPlayer != null) {
-                        // 断开连接, 显示自定义理由或默认踢出消息
+                    if (targetPlayer != null && targetPlayer.connection != null) {
                         targetPlayer.connection.disconnect(Component.literal(
                                 message != null && !message.isEmpty() ? message : "你已被管理员踢出"));
+                    } else {
+                        player.sendSystemMessage(Component.literal("§c玩家 " + target + " 不在线"));
                     }
                     break;
                 }
@@ -134,7 +135,7 @@ public class AdminPacket {
                             message != null && !message.isEmpty() ? message : "你已被封禁",
                             interval > 0 ? System.currentTimeMillis() + interval * 60000L : 0);
                     // 如果在线则立刻踢出
-                    if (banTarget != null) {
+                    if (banTarget != null && banTarget.connection != null) {
                         banTarget.connection.disconnect(Component.literal(
                                 message != null && !message.isEmpty() ? message : "你已被封禁"));
                     }
@@ -192,6 +193,8 @@ public class AdminPacket {
                                     "§a已向 " + target + " 转账 " + amount + " 币"));
                         } else {
                             // target为空: 给自己加钱
+                            AdminMod.LOGGER.info("Admin {} self-added {} coins",
+                                    player.getGameProfile().getName(), amount);
                             MoneyManager.addMoney(player, amount);
                         }
                         moneyRefresh(player);

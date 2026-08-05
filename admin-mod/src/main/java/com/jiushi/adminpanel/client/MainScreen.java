@@ -584,7 +584,7 @@ public class MainScreen extends Screen {
                     setStatus("已请求 " + pName);
                 }).bounds(left + 260, py, 40, 16).build());
             }
-            tpaY += Math.max(0, players.size() - 1) * 20 + 10;
+            tpaY += Math.max(0, players.size()) * 20 + 10;
         }
 
         // 传送点列表 (含传送/删除按钮, 删除需二次确认)
