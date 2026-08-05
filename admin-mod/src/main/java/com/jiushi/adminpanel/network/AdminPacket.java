@@ -37,11 +37,11 @@ public class AdminPacket {
     private Action action;      // 操作类型
     private String target;      // 目标玩家名 (可为空)
     private String message;     // 附加消息 (广播内容/封禁原因/金额等)
-    private int interval;       // 附加数值 (定时间隔秒数/封禁分钟数)
+    private long interval;       // 附加数值 (定时间隔秒数/封禁分钟数)
 
     public AdminPacket() {}
 
-    public AdminPacket(Action action, String target, String message, int interval) {
+    public AdminPacket(Action action, String target, String message, long interval) {
         this.action = action;
         this.target = target;
         this.message = message;
@@ -53,7 +53,7 @@ public class AdminPacket {
         this.action = buf.readEnum(Action.class);
         this.target = buf.readUtf();
         this.message = buf.readUtf();
-        this.interval = buf.readInt();
+        this.interval = buf.readLong();
     }
 
     /** 序列化: 写入网络字节流 */
@@ -61,7 +61,7 @@ public class AdminPacket {
         buf.writeEnum(packet.action);
         buf.writeUtf(packet.target != null ? packet.target : "");
         buf.writeUtf(packet.message != null ? packet.message : "");
-        buf.writeInt(packet.interval);
+        buf.writeLong(packet.interval);
     }
 
     /** 判断玩家是否为管理员 (本模组认证 或 原生OP) */

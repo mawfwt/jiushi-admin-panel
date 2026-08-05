@@ -126,7 +126,11 @@ public class TerritoryEvents {
     @SubscribeEvent
     public static void onPiston(PistonEvent.Pre event) {
         if (event.getLevel().isClientSide()) return;
-        String world = event.getLevel().dimension().location().toString();
+        String world = "";
+        if (event.getLevel() instanceof net.minecraft.world.level.Level level) {
+            world = level.dimension().location().toString();
+        }
+        if (world.isEmpty()) return;
         BlockPos pistonPos = event.getPos();
         TerritoryManager.Territory pistonT = TerritoryManager.getTerritoryAt(world, pistonPos);
         Direction dir = event.getDirection();
@@ -149,9 +153,8 @@ public class TerritoryEvents {
     public static void onExplosion(ExplosionEvent.Detonate event) {
         if (event.getLevel().isClientSide) return;
         String world = event.getLevel().dimension().location().toString();
-        Entity source = null;
         var ds = event.getExplosion().getDamageSource();
-        if (ds != null) source = ds.getEntity();
+        final Entity source = ds != null ? ds.getEntity() : null;
         event.getAffectedBlocks().removeIf(pos -> {
             TerritoryManager.Territory t = TerritoryManager.getTerritoryAt(world, pos);
             if (t == null) return false; // 不在领地内 → 保留

@@ -16,7 +16,7 @@ public class AdminManager {
     /** 定时公告消息内容 */
     private static volatile String timedMessage;
     /** 广播间隔秒数 */
-    private static volatile int intervalSeconds;
+    private static volatile long intervalSeconds;
     /** tick 计数器 (每秒20ticks) */
     private static volatile long tickCounter;
     /** 是否正在广播 */
@@ -27,7 +27,7 @@ public class AdminManager {
      * @param message 消息内容 (为空或空字符串则停止)
      * @param interval 间隔秒数 (≤0则停止)
      */
-    public static synchronized void setTimedMessage(String message, int interval) {
+    public static synchronized void setTimedMessage(String message, long interval) {
         timedMessage = message;
         intervalSeconds = interval;
         tickCounter = 0;
@@ -42,7 +42,7 @@ public class AdminManager {
         if (!active || timedMessage == null || intervalSeconds <= 0) return;
 
         tickCounter++;
-        int ticksForInterval = intervalSeconds * 20; // 秒 → tick 转换
+        long ticksForInterval = intervalSeconds * 20;
 
         if (tickCounter >= ticksForInterval) {
             tickCounter = 0;
