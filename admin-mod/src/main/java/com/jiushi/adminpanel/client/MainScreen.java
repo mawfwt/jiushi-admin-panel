@@ -236,6 +236,7 @@ public class MainScreen extends Screen {
                     int startY = rowY;
                     for (int i = 0; i < online.size(); i++) {
                         String p = online.get(i).getProfile().getName();
+                        if (p.equals(minecraft.player.getName().getString())) continue;
                         int cx = left + 10 + (i % cols) * (btnW + 4);
                         int cy = rowY + (i / cols) * 22;
                         if (cy > height - 60) break;
@@ -358,6 +359,7 @@ public class MainScreen extends Screen {
             var players = new ArrayList<>(minecraft.getConnection().getOnlinePlayers());
             for (int i = 0; i < players.size(); i++) {
                 final String pName = players.get(i).getProfile().getName();
+                if (pName.equals(minecraft.player.getName().getString())) continue;
                 int py = y + i * 18;
                 if (py > height - 80) break;
                 // 在线玩家快捷邀请按钮
