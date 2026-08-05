@@ -109,15 +109,12 @@ public class AdminPacket {
                         break;
                     }
                     ServerPlayer banTarget = player.getServer().getPlayerList().getPlayerByName(target);
-                    // interval>0 → 限时封禁, interval=0 → 永久封禁
                     Date banExpiry = interval > 0
                             ? new Date(System.currentTimeMillis() + interval * 60000L) : null;
                     GameProfile banProfile;
                     if (banTarget != null) {
-                        // 在线玩家: 直接获取 GameProfile
                         banProfile = banTarget.getGameProfile();
                     } else {
-                        // 离线玩家: 尝试从缓存获取, 或生成 Offline UUID
                         Optional<GameProfile> cached = player.getServer().getProfileCache().get(target);
                         if (cached.isPresent()) {
                             banProfile = cached.get();
@@ -126,10 +123,11 @@ public class AdminPacket {
                                     ("OfflinePlayer:" + target).getBytes(StandardCharsets.UTF_8)), target);
                         }
                     }
-                    // 添加到服务器封禁列表 (UUID匹配, 对曾上线的玩家有效)
-                    player.getServer().getPlayerList().getBans().add(
-                            new UserBanListEntry(banProfile, new Date(), "AdminMod", banExpiry,
-                                    message != null && !message.isEmpty() ? message : "你已被封禁"));
+                    if (!player.getServer().getPlayerList().getBans().isBanned(banProfile)) {
+                        player.getServer().getPlayerList().getBans().add(
+                                new UserBanListEntry(banProfile, new Date(), "AdminMod", banExpiry,
+                                        message != null && !message.isEmpty() ? message : "你已被封禁"));
+                    }
                     // 名字封禁 (解决在线模式下未上线过玩家的UUID无法匹配问题, 登录时校验)
                     BanManager.ban(target,
                             message != null && !message.isEmpty() ? message : "你已被封禁",

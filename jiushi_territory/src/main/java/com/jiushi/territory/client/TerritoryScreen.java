@@ -228,6 +228,7 @@ public class TerritoryScreen extends Screen {
                                 boolean official = "1".equals(parts[1]);
                                 String[] s1 = parts[2].split(",");
                                 String[] s2 = parts[3].split(",");
+                                if (s1.length < 2 || s2.length < 2) break;
                                 BlockPos start = new BlockPos(
                                         Integer.parseInt(s1[0]), 0, Integer.parseInt(s1[1]));
                                 BlockPos end = new BlockPos(

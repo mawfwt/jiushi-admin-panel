@@ -307,8 +307,8 @@ public class MainScreen extends Screen {
             int m; try { m = Integer.parseInt(banM.getValue()); } catch (Exception e) { m = 0; }
             int h; try { h = Integer.parseInt(banH.getValue()); } catch (Exception e) { h = 0; }
             int min; try { min = Integer.parseInt(banMin.getValue()); } catch (Exception e) { min = 0; }
-            int totalMin = banPermanent ? 0
-                    : (y * 525600 + m * 43200 + h * 60 + min);
+            long totalMin = banPermanent ? 0
+                    : ((long) y * 525600L + (long) m * 43200L + (long) h * 60L + (long) min);
             AdminMod.CHANNEL.sendToServer(new AdminPacket(
                     AdminPacket.Action.BAN, banTargetName, banReason.getValue(), totalMin));
             setStatus("已封禁 " + banTargetName
@@ -837,6 +837,7 @@ public class MainScreen extends Screen {
 
     /** 文本截断: 按像素宽度截断并加".."后缀 (处理§颜色码) */
     private String clipText(String text, int maxPixels) {
+        if (text == null) return "";
         if (font.width(text) <= maxPixels) return text;
         StringBuilder sb = new StringBuilder();
         boolean skipNext = false; // 跳过§颜色码的下一个字符

@@ -4,6 +4,29 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.0.10-alpha] - 2026-08-05
+
+### 修复
+
+- **购买原子性**：`purchaseItem` 加方法级同步锁，防止并发购买导致透支
+- **金币 int 溢出**：`MoneyManager` 内部改用 `long` 计算，结果钳制到 int 安全范围
+- **客户端列表线程安全**：`pendingShopListings` 改用 `synchronizedList`，防止跨线程 CME
+- **封禁时长溢出**：封禁界面年份乘法改用 `long`，防止溢出导致误判永久封禁
+- **ADD 价格无效反馈**：价格 ≤0 时补充调用 `buildAndSendListResponse`，错误提示送达客户端
+- **领地计数大小写**：私人领地数量检查改用 `equalsIgnoreCase`
+- **领地加载 NPE**：`nextId` 加载时增加 `instanceof Number` 类型保护
+- **邀请码并发竞态**：验证路径增加双重 `synchronized(admins)` 保护检查-添加原子性
+- **Inventory 部分放入**：购买时设置 `stack.setCount(1)` 再放入背包
+- **领地渲染硬编码高度**：改用 `level.getMinBuildHeight()` / `getMaxBuildHeight()`
+- **clipText null 保护**：增加 null 检查，防止异常商品名导致渲染崩溃
+- **重复封禁检测**：封禁前检查 `isBanned()`，避免重复条目
+- **BanManager null 防护**：`ban()` 和 `isBanned()` 增加空名检查
+- **坐标解析校验**：`TerritoryScreen` 创建解析增加 `split` 长度检查
+- **领地删除大小写**：`deleteTerritory` 改用 `equalsIgnoreCase` 匹配 owner
+- **好友请求并发**：`sendRequest` 加 `synchronized`，减少双请求竞态
+- **好友双向保存优化**：`acceptRequest` 合并两次 `addFriend` 为一次 `save()`
+- **mods.toml 版本上限**：Forge 依赖上限 `[47,48)`，MC 上限 `[1.20.1,1.20.2]`，面板依赖上限 `[1.0.5-alpha,1.1)`
+
 ## [1.0.9-alpha] - 2026-08-05
 
 ### 修复

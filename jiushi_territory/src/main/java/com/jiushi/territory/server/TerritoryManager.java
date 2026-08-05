@@ -104,7 +104,7 @@ public class TerritoryManager {
             // 数量限制
             int count = 0;
             for (Territory t : territories.values()) {
-                if (t.owner.equals(owner) && !t.official) count++;
+                if (t.owner.equalsIgnoreCase(owner) && !t.official) count++;
             }
             if (count >= MAX_PERSONAL) return "§c个人领地数量已达上限 (" + MAX_PERSONAL + ")";
         }
@@ -134,7 +134,7 @@ public class TerritoryManager {
         Territory t = territories.get(String.valueOf(id));
         if (t == null) return "§c领地不存在";
         String name = player.getGameProfile().getName();
-        boolean isAdmin = t.owner.equals(name)
+        boolean isAdmin = t.owner.equalsIgnoreCase(name)
                 || com.jiushi.adminpanel.server.SetupManager.isOwner(name);
         if (!isAdmin) return "§c你没有权限删除此领地";
         territories.remove(String.valueOf(id));
@@ -226,8 +226,9 @@ public class TerritoryManager {
                         new TypeToken<Map<String, Object>>() {}.getType());
                 if (data.containsKey("nextId")) {
                     Object nid = data.get("nextId");
-                    int loadedId = ((Number) nid).intValue();
-                    nextId.set(loadedId);
+                    if (nid instanceof Number) {
+                        nextId.set(((Number) nid).intValue());
+                    }
                 }
                 if (data.containsKey("territories")) {
                     String json = GSON.toJson(data.get("territories"));

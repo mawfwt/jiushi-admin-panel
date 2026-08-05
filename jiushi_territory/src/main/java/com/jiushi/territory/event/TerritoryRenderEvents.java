@@ -62,7 +62,9 @@ public class TerritoryRenderEvents {
             int minZ = Math.min(ti.z1, ti.z2);
             int maxZ = Math.max(ti.z1, ti.z2);
 
-            AABB box = new AABB(minX, -64, minZ, maxX + 1, 320, maxZ + 1);
+            int minY = player.level().getMinBuildHeight();
+            int maxY = player.level().getMaxBuildHeight();
+            AABB box = new AABB(minX, minY, minZ, maxX + 1, maxY, maxZ + 1);
             // 官方=红, 私人=青色
             float r = ti.official ? 1f : 0.3f;
             float g = ti.official ? 0.6f : 1f;

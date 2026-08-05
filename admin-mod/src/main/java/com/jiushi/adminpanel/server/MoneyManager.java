@@ -47,27 +47,27 @@ public class MoneyManager {
         return score.getScore();
     }
 
-    /** 内部写金币: 最低为0防止负数 */
-    private static void setMoneyUnlocked(ServerPlayer player, int amount) {
+    /** 内部写金币: 用long防溢出, 最低为0 */
+    private static void setMoneyUnlocked(ServerPlayer player, long amount) {
         Scoreboard scoreboard = player.getServer().getScoreboard();
         ensureMoneyObjective(scoreboard);
         Score score = scoreboard.getOrCreatePlayerScore(player.getGameProfile().getName(),
                 scoreboard.getObjective(MONEY_OBJECTIVE));
-        score.setScore(Math.max(0, amount));
+        score.setScore((int) Math.min(Math.max(0L, amount), Integer.MAX_VALUE));
     }
 
     /** 给在线玩家增加金币 (最低0) */
     public static synchronized void addMoney(ServerPlayer player, int amount) {
         if (player == null) return;
-        int current = getMoneyUnlocked(player);
-        setMoneyUnlocked(player, Math.max(0, current + amount));
+        long current = getMoneyUnlocked(player);
+        setMoneyUnlocked(player, current + (long) amount);
     }
 
     /** 从在线玩家扣除金币 (最低0) */
     public static synchronized void takeMoney(ServerPlayer player, int amount) {
         if (player == null) return;
-        int current = getMoneyUnlocked(player);
-        setMoneyUnlocked(player, Math.max(0, current - amount));
+        long current = getMoneyUnlocked(player);
+        setMoneyUnlocked(player, current - (long) amount);
     }
 
     /**
@@ -79,6 +79,7 @@ public class MoneyManager {
         Scoreboard scoreboard = server.getScoreboard();
         ensureMoneyObjective(scoreboard);
         Score score = scoreboard.getOrCreatePlayerScore(playerName, scoreboard.getObjective(MONEY_OBJECTIVE));
-        score.setScore(Math.max(0, score.getScore() + amount));
+        long current = score.getScore();
+        score.setScore((int) Math.min(Math.max(0L, current + (long) amount), Integer.MAX_VALUE));
     }
 }

@@ -14,20 +14,20 @@ description='''[九氏]好友系统 (Jiushi Friends Addon)
 [[dependencies.jiushi_friends]]
     modId="forge"
     mandatory=true
-    versionRange="[47,)"
+    versionRange="[47,48)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.jiushi_friends]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20.1,1.21)"
+    versionRange="[1.20.1,1.20.2]"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.jiushi_friends]]
     modId="jiushi_admin"
     mandatory=true
-    versionRange="[1.0.5-alpha,)"
+    versionRange="[1.0.5-alpha,1.1)"
     ordering="AFTER"
     side="BOTH"

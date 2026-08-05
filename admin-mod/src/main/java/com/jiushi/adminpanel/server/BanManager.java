@@ -55,6 +55,7 @@ public class BanManager {
      * @param expiryMs 过期时间戳(毫秒), 0=永久
      */
     public static void ban(String name, String reason, long expiryMs) {
+        if (name == null || name.isEmpty()) return;
         bans.put(normalize(name), new BanEntry(reason, expiryMs));
         save();
     }
@@ -64,6 +65,7 @@ public class BanManager {
      * @return 封禁信息; 未封禁返回 null
      */
     public static BanEntry isBanned(String name) {
+        if (name == null || name.isEmpty()) return null;
         BanEntry entry = bans.get(normalize(name));
         if (entry == null) return null;
         // 过期自动清理

@@ -106,7 +106,7 @@ public class ShopManager {
      * 购买商品.
      * 流程: 查找商品 → 检查库存/余额 → 扣款+转账给卖家 → 还原NBT为物品 → 放入背包 → 减库存
      */
-    public static PurchaseResult purchaseItem(ServerPlayer buyer, int listingId) {
+    public static synchronized PurchaseResult purchaseItem(ServerPlayer buyer, int listingId) {
         ShopListing listing;
         synchronized (listings) {
             listing = listings.stream().filter(l -> l.id == listingId).findFirst().orElse(null);
@@ -120,6 +120,8 @@ public class ShopManager {
         try {
             net.minecraft.nbt.CompoundTag tag = net.minecraft.nbt.TagParser.parseTag(listing.itemNbt);
             ItemStack stack = ItemStack.of(tag);
+            int remaining = listing.quantity;
+            stack.setCount(1);
             if (!buyer.getInventory().add(stack)) {
                 buyer.drop(stack, false);
             }

@@ -150,9 +150,11 @@ public class SetupManager {
                 return null;
             }
 
-            if (containsPlayerIgnoreCase(admins, playerName)) {
-                verifyAttempts.remove(playerKey);
-                return "already";
+            synchronized (admins) {
+                if (containsPlayerIgnoreCase(admins, playerName)) {
+                    verifyAttempts.remove(playerKey);
+                    return "already";
+                }
             }
 
             String hash = HashUtils.sha256(codeText + "JiuShi");
@@ -173,6 +175,10 @@ public class SetupManager {
             }
             pendingCodes.remove(hash);
             synchronized (admins) {
+                if (containsPlayerIgnoreCase(admins, playerName)) {
+                    verifyAttempts.remove(playerKey);
+                    return "already";
+                }
                 admins.put(playerName, "admin");
             }
             verifyAttempts.remove(playerKey);

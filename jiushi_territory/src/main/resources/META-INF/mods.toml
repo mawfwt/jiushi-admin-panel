@@ -14,20 +14,20 @@ description='''[九氏]领地扩展 (Jiushi Territory Addon)
 [[dependencies.jiushi_territory]]
     modId="forge"
     mandatory=true
-    versionRange="[47,)"
+    versionRange="[47,48)"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.jiushi_territory]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.20.1,1.21)"
+    versionRange="[1.20.1,1.20.2]"
     ordering="NONE"
     side="BOTH"
 
 [[dependencies.jiushi_territory]]
     modId="jiushi_admin"
     mandatory=true
-    versionRange="[1.0.5-alpha,)"
+    versionRange="[1.0.5-alpha,1.1)"
     ordering="AFTER"
     side="BOTH"

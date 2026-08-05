@@ -162,7 +162,7 @@ public class ShopPacket {
                     }
                     if (this.listings != null) {
                         if (ClientData.pendingShopListings == null) {
-                            ClientData.pendingShopListings = new ArrayList<>();
+                            ClientData.pendingShopListings = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
                         }
                         ClientData.pendingShopListings.addAll(this.listings);
                     }
@@ -227,6 +227,7 @@ public class ShopPacket {
                     if (price <= 0) {
                         pendingStatusMessages.put(player.getUUID(), "§c价格必须大于0");
                         player.sendSystemMessage(Component.literal("§c价格必须大于0"));
+                        buildAndSendListResponse(player, pendingStatusMessages.remove(player.getUUID()));
                         break;
                     }
                     if (player.getMainHandItem() != null && !player.getMainHandItem().isEmpty()) {

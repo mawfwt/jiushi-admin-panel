@@ -50,7 +50,7 @@ public class FriendManager {
      * 发送好友请求
      * @return 0=成功, 1=不能添加自己, 2=已经是好友, 3=你已经发送过请求, 4=对方已发送请求给你
      */
-    public static int sendRequest(String from, String target) {
+    public static synchronized int sendRequest(String from, String target) {
         from = norm(from);
         target = norm(target);
         if (from.equals(target)) return 1; // 不能加自己 (小写比较)
@@ -73,9 +73,8 @@ public class FriendManager {
         Set<String> pendingList = pending.get(player);
         if (pendingList == null || !pendingList.contains(from)) return false;
         pendingList.remove(from);
-        addFriend(player, from); // 双向添加
-        addFriend(from, player);
-        savePending();
+        addFriend(player, from);
+        save();
         return true;
     }
 
