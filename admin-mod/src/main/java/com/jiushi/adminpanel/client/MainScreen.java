@@ -227,7 +227,7 @@ public class MainScreen extends Screen {
                         inviteName.setValue("");
                     }
                 }).bounds(left + 175, rowY - 1, 40, 20).build());
-                rowY += 22;
+                rowY += 28;
                 // 在线玩家快捷选择按钮
                 if (minecraft != null && minecraft.getConnection() != null) {
                     var online = new ArrayList<>(minecraft.getConnection().getOnlinePlayers());
@@ -562,13 +562,13 @@ public class MainScreen extends Screen {
             var players = new ArrayList<>(minecraft.getConnection().getOnlinePlayers());
             for (int i = 0; i < players.size(); i++) {
                 String pName = players.get(i).getProfile().getName();
-                if (pName.equals(minecraft.player.getName().getString())) continue; // 去掉自己
+                if (pName.equals(minecraft.player.getName().getString())) continue;
                 int py = tpaY + i * 20;
                 if (py > height - 80) break;
                 addRenderableWidget(Button.builder(Component.literal("TPA"), btn -> {
                     AdminMod.CHANNEL.sendToServer(new TpaPacket(TpaPacket.Action.REQUEST, pName));
                     setStatus("已请求 " + pName);
-                }).bounds(left + 260, py, 40, 16).build());
+                }).bounds(left + 260, py + 2, 40, 16).build());
             }
             tpaY += Math.max(0, players.size()) * 20 + 10;
         }
@@ -642,9 +642,9 @@ public class MainScreen extends Screen {
                 case ADMIN -> {
                     if (isAdmin()) {
                         int labelX = left + 10;
-                        int r1 = contentTop - 2;
-                        int r2 = contentTop + 22;
-                        int r3 = contentTop + 48;
+                        int r1 = contentTop - 8;
+                        int r2 = contentTop + 16;
+                        int r3 = contentTop + 42;
                         int r4 = r3 + 24;
                         if (isOwner()) r4 = r3 + 22 + 22;
                         g.drawString(font, "§7▶ 公告广播", labelX, r1, 0xFFAAAAAA);
@@ -724,14 +724,14 @@ public class MainScreen extends Screen {
                         }
                         y += 10;
                     }
-                    g.drawString(font, "传送点:", left + 8, y, 0xFFAAAAAA); y += 12;
+                    g.drawString(font, "传送点:", left + 8, y, 0xFFAAAAAA); y += 14;
                     for (var e : warps.entrySet()) {
                         if (y > height - 50) break;
                         String label = e.getKey();
                         if (e.getValue().visibility == 2) label = "§6[官方]§r " + label;
                         else if (e.getValue().owner != null && !e.getValue().owner.isEmpty())
                             label = label + " §7[由: " + e.getValue().owner + "]§r";
-                        g.drawString(font, clipText(label, 195), left + 15, y + 2, 0xFFFFFFFF);
+                        g.drawString(font, clipText(label, 195), left + 15, y, 0xFFFFFFFF);
                         y += 22;
                     }
                     if (warps.isEmpty())
@@ -744,7 +744,7 @@ public class MainScreen extends Screen {
                         g.drawCenteredString(font, Component.literal("暂无可用的扩展包"),
                                 width / 2, contentTop + 40, 0xFF888888);
                     } else {
-                        g.drawString(font, "已安装的扩展:", left + 10, contentTop + 8, 0xFFAAAAAA);
+                        g.drawString(font, "已安装的扩展:", left + 10, contentTop + 2, 0xFFAAAAAA);
                     }
                 }
             }
