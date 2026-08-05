@@ -105,15 +105,19 @@ _jiushi_admin (核心面板 · 必装)
 | 角色 | 标识 | 获取方式 | 权限范围 |
 | --- | --- | --- | --- |
 | 服主 owner | 金色 | 首位 OP 自动获得；邀请码授予 | 全部权限 · 不可被踢/封 · 可管理其他管理员 |
-| 开发者 developer | 红色 | 万能密钥验证 | 等同于服主 · 硬编码后门 |
+| 开发者 developer | 红色 | 定向授权（Alpha/Beta 调试专用） | 等同于服主 · 用于问题排查 |
 | 管理员 OP | 蓝色 | 服主邀请码 · 细粒度权限 | 管理广播 · 踢/封 · 商店管理 · 传送管理 |
 | 普通玩家 | 青色 | 默认 | 商店买卖 · 传送 · TPA · 领地 |
+
+> **开发者角色说明**：`developer` 是 Alpha/Beta 测试阶段保留的调试权限单元，权限等同于服主。目的是当服主不在线时，模组作者可直接登录服务器定位 Bug、验证修复或紧急干预。当前使用固定验证凭证（服务端校验，不可伪造），Beta 阶段将升级为 **动态 8 位 + 5 分钟有效期的一次性验证码**，确保只有作者能获取。
+>
+> 该角色是否保留至正式版，**取决于 A/B 测期间社区接受度**。若服主群体认可这种做法（方便故障排查、减轻维护负担），则正式版继续保留；若普遍反对，则正式版发布时移除，届时已有 developer 权限的玩家将自动还原为普通玩家。
 
 ### 2.2 邀请码验证系统
 
 - 服主生成 8 位安全随机码，指定目标玩家，有效期 5 分钟
 - 输入错误 5 次后自动锁定 5 分钟
-- 万能密钥（开发者模式）：SHA-256 哈希 + salt 双重保护，离线暴力不可行
+- 开发者验证采用独立校验通道，Beta 阶段升级为动态 8 位 + 5 分钟一次性授权码
 - 验证成功后自动授予 OP 权限，面板信息即时刷新
 
 ### 2.3 广播与公告
@@ -125,7 +129,7 @@ _jiushi_admin (核心面板 · 必装)
 
 - **踢出**：即时断开连接，可填原因
 - **封禁**：支持年/月/时/分钟细粒度临时封禁 + 永久封禁
-- **免疫机制**：服主/开发者自动免疫踢出和封禁
+- **免疫机制**：服主和开发者自动免疫踢出和封禁
 - **双重封禁列表**：封禁同时写入服务器原生封禁列表与名字封禁库（`bans.json`），在线模式服务器也能正确拦截未上线过的玩家
 - **操作日志**：写入服务端
 
@@ -327,6 +331,7 @@ gradlew build       # 产物位于 build/libs/，已自动 reobf
 
 **Beta**
 
+- 开发者动态验证码（8 位 + 5 分钟一次性）
 - 领地细分权限（容器/开关/红石）
 - 好友 TPA
 - 性能优化
@@ -335,6 +340,7 @@ gradlew build       # 产物位于 build/libs/，已自动 reobf
 
 **正式版**
 
+- 根据社区反馈决定 developer 角色去留
 - 网页在线管理面板
 - 手机远控 App
 - DLC 付费商店
@@ -501,15 +507,19 @@ All data lives in `config/jiushi_admin/` as UTF-8 JSON files. Server owners may 
 | Role | Tag | How to obtain | Permissions |
 | --- | --- | --- | --- |
 | Owner | Gold | First OP automatically; invite-code grant | Everything · immune to kick/ban · manage other admins |
-| Developer | Red | Master key verification | Same as owner · hardcoded backdoor |
+| Developer | Red | Authorized access (Alpha/Beta debugging only) | Same as owner · used for issue diagnosis |
 | Admin (OP) | Blue | Owner invite code · fine-grained permissions | Broadcast · kick/ban · shop management · teleport management |
 | Regular player | Cyan | Default | Shop buy/sell · teleport · TPA · territory |
+
+> **Developer role note**: `developer` is a debug permission unit reserved during Alpha/Beta testing, with permissions equivalent to owner. It allows the mod author to log in and directly diagnose bugs, verify fixes, or intervene in emergencies when the server owner is offline. Currently uses a fixed verification credential (server-side validated, unforgeable); the Beta phase will upgrade to a **dynamic 8-character, 5-minute one-time verification code**, ensuring only the author can obtain access.
+>
+> Whether this role stays in the release version **depends on community acceptance during Alpha/Beta**. If server owners find it useful (easier troubleshooting, reduced maintenance burden), it will be kept in the release. If widely opposed, it will be removed at release, at which point existing developer accounts will be downgraded to regular players.
 
 ### 1.2 Invite Code System
 
 - The owner generates an 8-character secure random code bound to a target player, valid for 5 minutes
 - 5 wrong attempts lock the verifier for 5 minutes
-- Master key (developer mode): SHA-256 hash + salt, infeasible to brute-force offline
+- Developer verification uses a separate channel; Beta phase will upgrade to a dynamic 8-character, 5-minute one-time code
 - Successful verification grants OP automatically; the panel refreshes instantly
 
 ### 1.3 Broadcast & Announcements
@@ -723,6 +733,7 @@ gradlew build       # artifacts land in build/libs/, already reobfuscated
 
 **Beta**
 
+- Developer dynamic verification code (8-char, 5-minute one-time)
 - Fine-grained territory permissions (containers/switches/redstone)
 - Friend TPA
 - Performance optimization
@@ -731,6 +742,7 @@ gradlew build       # artifacts land in build/libs/, already reobfuscated
 
 **Release**
 
+- Decide developer role fate based on community feedback
 - Web-based online admin panel
 - Mobile remote-control app
 - Paid DLC store
