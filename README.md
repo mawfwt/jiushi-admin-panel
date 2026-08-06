@@ -7,7 +7,7 @@
 | 项目 Item | 信息 Info |
 | --- | --- |
 | 作者 Author | MA |
-| 版本 Version | v1.0.12-alpha |
+| 版本 Version | v1.0.13-alpha |
 | 许可协议 License | Apache-2.0 |
 | 适用版本 Game | Minecraft 1.20.1 · Forge 47.3.0+ |
 | Java | 17 |
@@ -52,7 +52,7 @@
 
 | 模组 | JAR 文件 | 版本 | 大小 | 类型 |
 | --- | --- | --- | --- | --- |
-| 核心面板 | `_jiushi_admin-1.20.1-1.0.12-alpha.jar` | 1.0.12-alpha | ~97 KB | 必装 |
+| 核心面板 | `_jiushi_admin-1.20.1-1.0.13-alpha.jar` | 1.0.13-alpha | ~97 KB | 必装 |
 | 好友系统 | `jiushi_friends-0.1.0-alpha.jar` | 0.1.0-alpha | ~24 KB | DLC |
 | 领地扩展 | `jiushi_territory-0.1.1-alpha.jar` | 0.1.1-alpha | ~45 KB | DLC |
 
@@ -454,7 +454,7 @@ Jiushi Admin Panel is an all-in-one management solution for Minecraft Forge 1.20
 
 | Mod | JAR File | Version | Size | Type |
 | --- | --- | --- | --- | --- |
-| Core Panel | `_jiushi_admin-1.20.1-1.0.12-alpha.jar` | 1.0.12-alpha | ~97 KB | Required |
+| Core Panel | `_jiushi_admin-1.20.1-1.0.13-alpha.jar` | 1.0.13-alpha | ~97 KB | Required |
 | Friends | `jiushi_friends-0.1.0-alpha.jar` | 0.1.0-alpha | ~24 KB | DLC |
 | Territory | `jiushi_territory-0.1.1-alpha.jar` | 0.1.1-alpha | ~45 KB | DLC |
 

@@ -4,6 +4,13 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.0.13-alpha] - 2026-08-06
+
+### 修复
+
+- **权限识别补全 — 原生 OP 玩家视为管理员**：`ShopPacket` REMOVE 下架校验、`WarpManager` 官方传送点创建、`buildAndSendListResponse` LIST 响应三处增加 `isOp()` 判断，使原生 `/op` 授权的玩家无需加入面板管理员名单即可下架商品、创建官方传送点并自动显示管理界面
+- **GUI 布局微调**：在线玩家列表增加 18px 垂直偏移，改善与上方控件的间距
+
 ## [1.0.12-alpha] - 2026-08-05
 
 ### 修复

@@ -329,19 +329,17 @@ public class MainScreen extends Screen {
             boolean admin = isAdmin();
             var players = new ArrayList<>(minecraft.getConnection().getOnlinePlayers());
             lastPlayerCount = players.size();
-            int y = baseY;
+            int y = baseY + 18;
             for (int i = 0; i < players.size(); i++) {
                 final String pName = players.get(i).getProfile().getName();
                 int py = y + i * 18;
                 if (py > height - 50) break;
                 if (admin && !isProtectedRole(pName)) {
-                    // 踢出按钮
                     addRenderableWidget(Button.builder(Component.literal("踢出"), btn -> {
                         AdminMod.CHANNEL.sendToServer(new AdminPacket(
                                 AdminPacket.Action.KICK, pName, "", 0));
                         setStatus("已踢出 " + pName);
                     }).bounds(left + 230, py, 35, 16).build());
-                    // 封禁按钮 → 展开封禁子表单
                     addRenderableWidget(Button.builder(Component.literal("封禁"), btn -> {
                         banTargetName = pName; banPermanent = false; rebuildWidgets();
                     }).bounds(left + 270, py, 35, 16).build());

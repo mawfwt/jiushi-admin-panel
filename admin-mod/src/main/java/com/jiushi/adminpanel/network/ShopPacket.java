@@ -249,10 +249,10 @@ public class ShopPacket {
                 }
 
                 case REMOVE: {
-                    // 下架商品: 仅管理员或卖家本人可操作, 剩余物品退还
                     ShopManager.ShopListing targetListing = ShopManager.getListing(index);
                     if (targetListing != null) {
-                        boolean isAdmin = SetupManager.isAdmin(player.getName().getString());
+                        boolean isAdmin = SetupManager.isAdmin(player.getName().getString())
+                                || player.getServer().getPlayerList().isOp(player.getGameProfile());
                         boolean isOwner = targetListing.sellerName != null
                                 && targetListing.sellerName.equalsIgnoreCase(player.getName().getString());
                         if (!isAdmin && !isOwner) {
@@ -313,7 +313,9 @@ public class ShopPacket {
         response.more = to < all.size(); // 还有下一页
         if (page <= 0) {
             // 仅首页携带元数据
-            response.verified = SetupManager.isAdmin(player.getName().getString());
+            boolean isAdmin = SetupManager.isAdmin(player.getName().getString())
+                    || player.getServer().getPlayerList().isOp(player.getGameProfile());
+            response.verified = isAdmin;
             response.statusMsg = statusMsg != null ? statusMsg : "";
             response.money = MoneyManager.getMoney(player);
             response.role = SetupManager.getRole(player.getName().getString());

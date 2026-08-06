@@ -105,8 +105,10 @@ public class WarpManager {
     /** 设置传送点. 仅官方传送点要求管理员权限, 私人/公开所有玩家可创建 */
     public static void setWarp(String name, ServerPlayer player, int visibility) {
         if (visibility == OFFICIAL) {
-            if (!SetupManager.isAdmin(player.getName().getString())) {
-                return; // 非管理员不能设置官方传送点
+            boolean isAdmin = SetupManager.isAdmin(player.getName().getString())
+                    || player.getServer().getPlayerList().isOp(player.getGameProfile());
+            if (!isAdmin) {
+                return;
             }
         }
         warps.put(name, new WarpPoint(name, player, visibility));
