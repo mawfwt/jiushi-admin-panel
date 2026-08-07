@@ -205,7 +205,9 @@ public class AdminPacket {
                 }
 
                 case VOUCHER: {
-                    // === 生成兑换券 (消费金币, 生成可交易的纸质券) ===
+                    // === 生成兑换券 ===
+                    // 设计意图: 兑换券定位为"现金/支票"，任何玩家消耗自身金币即可生成，可交易给他人兑换。
+                    // 因此本操作不校验管理员权限，所有玩家均可使用。
                     try {
                         int voucherAmount = Integer.parseInt(message);
                         VoucherManager.createVoucher(player, voucherAmount);

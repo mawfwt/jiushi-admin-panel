@@ -258,6 +258,7 @@ public class ShopPacket {
                         if (!isAdmin && !isOwner) {
                             pendingStatusMessages.put(player.getUUID(), "§c你没有权限下架此商品");
                             player.sendSystemMessage(Component.literal("§c你没有权限下架此商品"));
+                            buildAndSendListResponse(player, pendingStatusMessages.remove(player.getUUID()));
                             break;
                         }
                         if (targetListing.quantity > 0) {

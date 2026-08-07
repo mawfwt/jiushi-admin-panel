@@ -400,7 +400,7 @@ public class MainScreen extends Screen {
                 transferState = 1; minecraft.setScreen(new MainScreen());
             }).bounds(left + 295, contentTop + 7, 45, 20).build());
         }
-        // 兑换券生成 (管理员: 输入金额 → 生成)
+        // 兑换券生成 (全玩家可用: 消耗自身金币造券, 定位为现金/支票)
         addRenderableWidget(Button.builder(Component.literal("兑换券"), btn -> {
             try {
                 int p = Integer.parseInt(price.getValue());
