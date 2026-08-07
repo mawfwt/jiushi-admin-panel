@@ -72,10 +72,12 @@ public class ServerEvents {
         BanManager.BanEntry ban = BanManager.isBanned(player.getGameProfile().getName());
         if (ban != null) {
             String reason = ban.reason != null ? ban.reason : "你已被封禁";
-            player.connection.disconnect(Component.literal(
-                    "§c你已被封禁: " + reason
-                            + (ban.expiry > 0 ? " (封禁至 " + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm")
-                            .format(new java.util.Date(ban.expiry)) + ")" : " (永久)")));
+            if (player.connection != null) {
+                player.connection.disconnect(Component.literal(
+                        "§c你已被封禁: " + reason
+                                + (ban.expiry > 0 ? " (封禁至 " + new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm")
+                                .format(new java.util.Date(ban.expiry)) + ")" : " (永久)")));
+            }
             return;
         }
 

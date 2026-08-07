@@ -30,6 +30,10 @@
 - **核心面板 — ShopManager 上架/下架线程安全**：`addListing` 与 `removeListing` 未与 `purchaseItem` 同步，并发购买+上架/下架时可能导致 `save()` 覆盖冲突。现统一加 `synchronized`
 - **领地扩展 — onFluidPlace 遍历 players() 并发风险**：`sl.players()` 返回实时视图，遍历期间若有玩家加入/离开可能抛出 `ConcurrentModificationException`。现改为先 copy 再遍历
 
+### 后续修复（同日 · 第三轮）
+
+- **核心面板 — 封禁登录 disconnect NPE 防御**：`onPlayerJoin` 中 `player.connection.disconnect` 在极端情况下（连接未完全建立即触发事件）可能为 null 导致崩溃。现加 null 检查，与 `AdminPacket` BAN/KICK 的防御策略一致
+
 ## [1.0.13-alpha] - 2026-08-06
 
 ### 修复
