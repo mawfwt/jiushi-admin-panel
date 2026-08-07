@@ -145,7 +145,7 @@ public class MainScreen extends Screen {
     /** 指定玩家是否为受保护角色 (服主/开发者 - 不可踢/不可封) */
     private boolean isProtectedRole(String playerName) {
         for (AdminInfo ai : adminList) {
-            if (ai.name.equals(playerName)) {
+            if (ai.name.equalsIgnoreCase(playerName)) {
                 return "owner".equals(ai.role) || "developer".equals(ai.role);
             }
         }

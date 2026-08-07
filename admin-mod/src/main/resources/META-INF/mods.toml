@@ -4,7 +4,7 @@ license = "Apache-2.0"
 
 [[mods]]
 modId = "jiushi_admin"
-version = "1.0.13-alpha"
+version = "1.0.14-alpha"
 displayName = "[九氏]游戏内面板"
 authors = "MA"
 description = '''[九氏]游戏内管理面板

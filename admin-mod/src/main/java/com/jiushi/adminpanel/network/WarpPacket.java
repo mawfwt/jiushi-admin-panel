@@ -131,7 +131,7 @@ public class WarpPacket {
                         // 覆盖权限: 管理员 或 传送点owner本人
                         boolean canOverwrite = isAdmin
                                 || (existingWp.owner != null
-                                && existingWp.owner.equals(player.getName().getString()));
+                                && existingWp.owner.equalsIgnoreCase(player.getName().getString()));
                         if (!canOverwrite) {
                             player.sendSystemMessage(Component.literal("§c你没有权限覆盖此传送点"));
                             break;
@@ -159,7 +159,7 @@ public class WarpPacket {
                     }
                     boolean canDelete = isAdmin
                             || (existingWarp.owner != null
-                            && existingWarp.owner.equals(player.getName().getString()));
+                            && existingWarp.owner.equalsIgnoreCase(player.getName().getString()));
                     if (!canDelete) {
                         player.sendSystemMessage(Component.literal("§c你没有权限删除此传送点"));
                         break;
@@ -177,7 +177,7 @@ public class WarpPacket {
                         boolean canUse = wp.visibility == WarpManager.PUBLIC
                                 || wp.visibility == WarpManager.OFFICIAL
                                 || (wp.owner != null
-                                && wp.owner.equals(player.getName().getString()));
+                                && wp.owner.equalsIgnoreCase(player.getName().getString()));
                         if (!canUse) {
                             player.sendSystemMessage(Component.literal("§c你没有权限传送至该传送点"));
                             break;

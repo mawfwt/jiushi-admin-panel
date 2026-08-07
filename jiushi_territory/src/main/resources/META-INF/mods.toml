@@ -4,7 +4,7 @@ license="Apache-2.0"
 
 [[mods]]
 modId="jiushi_territory"
-version="0.1.1-alpha"
+version="0.1.2-alpha"
 displayName="[九氏]领地扩展"
 authors="MA"
 description='''[九氏]领地扩展 (Jiushi Territory Addon)

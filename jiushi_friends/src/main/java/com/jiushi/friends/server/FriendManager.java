@@ -74,7 +74,6 @@ public class FriendManager {
         if (pendingList == null || !pendingList.contains(from)) return false;
         pendingList.remove(from);
         addFriend(player, from);
-        save();
         savePending();
         return true;
     }

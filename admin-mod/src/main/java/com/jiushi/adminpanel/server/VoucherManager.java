@@ -51,13 +51,13 @@ public class VoucherManager {
             player.sendSystemMessage(Component.literal("§c余额不足 (当前: " + current + " 币)"));
             return;
         }
-        MoneyManager.takeMoney(player, amount);
         String codeId = generateCodeId();
         String rawCode = codeId + amount + "JiuShi";
         String hash = HashUtils.sha256(rawCode);
 
         voucherMap.put(hash, amount);
         save();
+        MoneyManager.takeMoney(player, amount);
 
         // 创建纸质券物品
         ItemStack voucher = new ItemStack(Items.PAPER);

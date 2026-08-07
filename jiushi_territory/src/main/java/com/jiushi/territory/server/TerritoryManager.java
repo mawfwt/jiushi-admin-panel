@@ -151,8 +151,8 @@ public class TerritoryManager {
         if (found == null) return true; // 不在任何领地 → 有权限
         String name = player.getGameProfile().getName();
         if (com.jiushi.adminpanel.server.SetupManager.isOwner(name)) return true;
-        if (found.owner.equals(name)) return true;
-        if (found.allowed.contains(name)) return true;
+        if (found.owner.equalsIgnoreCase(name)) return true;
+        if (allowedContains(found.allowed, name)) return true;
         return false;
     }
 
@@ -187,6 +187,14 @@ public class TerritoryManager {
     public static void removeAllowed(int id, String name) {
         Territory t = territories.get(String.valueOf(id));
         if (t != null) { t.allowed.remove(name); save(); }
+    }
+
+    /** 大小写不敏感判断白名单是否包含指定玩家 */
+    private static boolean allowedContains(Set<String> allowed, String name) {
+        for (String a : allowed) {
+            if (a.equalsIgnoreCase(name)) return true;
+        }
+        return false;
     }
 
     /** AABB矩形重叠检测 (仅XZ平面) */
@@ -236,7 +244,12 @@ public class TerritoryManager {
                     if (arr != null) {
                         for (Territory t : arr) {
                             // 反序列化后确保allowed集合不为null
-                            if (t.allowed == null) t.allowed = new HashSet<>();
+                            if (t.allowed == null) t.allowed = ConcurrentHashMap.newKeySet();
+                            else {
+                                Set<String> safe = ConcurrentHashMap.newKeySet();
+                                safe.addAll(t.allowed);
+                                t.allowed = safe;
+                            }
                             territories.put(String.valueOf(t.id), t);
                         }
                     }

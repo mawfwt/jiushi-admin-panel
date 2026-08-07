@@ -2,7 +2,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
-version = '1.0.13-alpha'
+version = '1.0.14-alpha'
 base.archivesName = '_jiushi_admin-1.20.1'
 group = 'com.jiushi.adminpanel'
 

@@ -4,6 +4,26 @@
 
 格式基于 [Keep a Changelog](https://keepachangelog.com/zh-CN/1.1.0/)，版本号遵循 [SemVer](https://semver.org/lang/zh-CN/)。
 
+## [1.0.14-alpha] - 2026-08-07
+
+### 修复
+
+- **核心面板 — 下架权限拒绝时客户端无响应**：`ShopPacket` REMOVE 路径中权限不足的 `break` 直接跳出了 `switch`，导致 `buildAndSendListResponse` 未执行，客户端永远收不到错误提示。现改为 `return` 提前调用响应发送后再退出
+- **核心面板 — 兑换券扣款在凭证存储之前**：`VoucherManager.createVoucher` 此前先 `takeMoney` 再 `voucherMap.put` + `save`，若服务端在扣款与存证之间崩溃，金币已扣但兑换券未生成。现改为先存证后扣款，与 v1.0.9 CHANGELOG 所述一致
+- **核心面板 — WarpPacket 三处 owner 大小写敏感比对**：`SET`/`DEL`/`GO` 路径中对传送点 owner 使用了 `equals()`，可能导致不同大小写的同一玩家被拒绝覆盖/删除/使用权限。全部改为 `equalsIgnoreCase()`
+- **核心面板 — MainScreen isProtectedRole 大小写敏感**：管理员列表中角色判定使用 `equals()` 比对玩家名，现改为 `equalsIgnoreCase()`
+- **领地扩展 — TerritoryManager.canInteract owner 大小写敏感**：领地权限判定中 owner 使用 `equals()`，现改为 `equalsIgnoreCase()`
+- **领地扩展 — TerritoryEvents.onPlayerTick owner 大小写敏感**：强制冒险模式判定中 owner 使用 `equals()`，现改为 `equalsIgnoreCase()`
+- **领地扩展 — 白名单成员大小写敏感**：`TerritoryManager.canInteract` 和 `TerritoryEvents.onPlayerTick` 中 `allowed.contains()` 为大小写敏感比对，新增 `allowedContains` / `allowedContainsIgnoreCase` 辅助方法统一改为大小写不敏感
+- **领地扩展 — TerritoryManager 加载后白名单线程安全丢失**：Gson 反序列化后 `allowed` 集合不再是 `ConcurrentHashMap.newKeySet()`，多线程下存在并发风险。现加载后重新包装为线程安全集合
+- **好友系统 — acceptRequest 重复写文件**：`acceptRequest` 中 `addFriend` 已内部调用 `save()`，外层又再调用一次 `save()`，造成同一次操作写两次文件。移除冗余的 `save()` 调用
+
+### 版本更新
+
+- 核心面板: `1.0.13-alpha` → `1.0.14-alpha`
+- 好友系统: `0.1.0-alpha` → `0.1.1-alpha`
+- 领地扩展: `0.1.1-alpha` → `0.1.2-alpha`
+
 ## [1.0.13-alpha] - 2026-08-06
 
 ### 修复

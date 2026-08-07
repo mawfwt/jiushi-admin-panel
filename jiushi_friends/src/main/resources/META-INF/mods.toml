@@ -4,7 +4,7 @@ license="Apache-2.0"
 
 [[mods]]
 modId="jiushi_friends"
-version="0.1.0-alpha"
+version="0.1.1-alpha"
 displayName="[九氏]好友系统"
 authors="MA"
 description='''[九氏]好友系统 (Jiushi Friends Addon)

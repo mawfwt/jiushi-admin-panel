@@ -255,11 +255,11 @@ public class ShopPacket {
                                 || player.getServer().getPlayerList().isOp(player.getGameProfile());
                         boolean isOwner = targetListing.sellerName != null
                                 && targetListing.sellerName.equalsIgnoreCase(player.getName().getString());
-                        if (!isAdmin && !isOwner) {
+                    if (!isAdmin && !isOwner) {
                             pendingStatusMessages.put(player.getUUID(), "§c你没有权限下架此商品");
                             player.sendSystemMessage(Component.literal("§c你没有权限下架此商品"));
                             buildAndSendListResponse(player, pendingStatusMessages.remove(player.getUUID()));
-                            break;
+                            return;
                         }
                         if (targetListing.quantity > 0) {
                             returnItemToSeller(player, targetListing);

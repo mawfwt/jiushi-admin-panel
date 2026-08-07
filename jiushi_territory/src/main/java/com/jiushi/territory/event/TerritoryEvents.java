@@ -195,8 +195,8 @@ public class TerritoryEvents {
                 player.level().dimension().location().toString(), currentPos);
 
         boolean shouldForce = territory != null && territory.official
-                && !territory.owner.equals(player.getGameProfile().getName())
-                && !territory.allowed.contains(player.getGameProfile().getName())
+                && !territory.owner.equalsIgnoreCase(player.getGameProfile().getName())
+                && !allowedContainsIgnoreCase(territory.allowed, player.getGameProfile().getName())
                 && !com.jiushi.adminpanel.server.SetupManager.isOwner(player.getGameProfile().getName());
 
         if (shouldForce) {
@@ -213,6 +213,14 @@ public class TerritoryEvents {
                 }
             }
         }
+    }
+
+    /** 大小写不敏感判断白名单是否包含指定玩家 */
+    private static boolean allowedContainsIgnoreCase(java.util.Set<String> allowed, String name) {
+        for (String a : allowed) {
+            if (a.equalsIgnoreCase(name)) return true;
+        }
+        return false;
     }
 
     /** 玩家下线时: 恢复原始游戏模式 + 清理跟踪数据 */
