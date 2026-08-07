@@ -78,7 +78,7 @@ public class ShopManager {
     }
 
     /** 上架物品: 验证物品非空 + 价格>0 */
-    public static boolean addListing(ServerPlayer seller, ItemStack stack, int price) {
+    public static synchronized boolean addListing(ServerPlayer seller, ItemStack stack, int price) {
         if (stack.isEmpty()) return false;
         if (price <= 0) return false;
         String sellerName = seller.getName().getString();
@@ -96,7 +96,7 @@ public class ShopManager {
     }
 
     /** 下架商品 (移除后保存) */
-    public static boolean removeListing(int id) {
+    public static synchronized boolean removeListing(int id) {
         boolean removed = listings.removeIf(l -> l.id == id);
         if (removed) save();
         return removed;

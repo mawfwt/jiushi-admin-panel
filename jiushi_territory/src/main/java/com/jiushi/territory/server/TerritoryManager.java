@@ -86,7 +86,7 @@ public class TerritoryManager {
      * 创建领地
      * @return null=成功, 否则返回错误消息字符串
      */
-    public static String createTerritory(String name, ServerPlayer player,
+    public static synchronized String createTerritory(String name, ServerPlayer player,
                                           BlockPos start, BlockPos end, boolean official) {
         String owner = player.getGameProfile().getName();
         // 唯一名称检查

@@ -24,6 +24,12 @@
 - 好友系统: `0.1.0-alpha` → `0.1.1-alpha`
 - 领地扩展: `0.1.1-alpha` → `0.1.2-alpha`
 
+### 后续修复（同日）
+
+- **领地扩展 — createTerritory 并发竞态**：`createTerritory` 缺少同步锁，两玩家同时创建可能绕过名称唯一性、数量上限及重叠检测。现加 `synchronized` 保护整个创建流程
+- **核心面板 — ShopManager 上架/下架线程安全**：`addListing` 与 `removeListing` 未与 `purchaseItem` 同步，并发购买+上架/下架时可能导致 `save()` 覆盖冲突。现统一加 `synchronized`
+- **领地扩展 — onFluidPlace 遍历 players() 并发风险**：`sl.players()` 返回实时视图，遍历期间若有玩家加入/离开可能抛出 `ConcurrentModificationException`。现改为先 copy 再遍历
+
 ## [1.0.13-alpha] - 2026-08-06
 
 ### 修复

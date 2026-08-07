@@ -108,7 +108,7 @@ public class TerritoryEvents {
         String world = sl.dimension().location().toString();
         TerritoryManager.Territory t = TerritoryManager.getTerritoryAt(world, pos);
         if (t == null) return; // 不在领地内 → 不拦截
-        for (ServerPlayer p : sl.players()) {
+        for (ServerPlayer p : new ArrayList<>(sl.players())) {
             if (p.level().dimension().location().toString().equals(world)
                     && p.blockPosition().distSqr(pos) <= 64 // 8格距离平方
                     && TerritoryManager.canInteract(p, pos)) {
